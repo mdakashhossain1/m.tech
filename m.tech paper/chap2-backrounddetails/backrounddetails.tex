@@ -1,0 +1,78 @@
+% Excluded from the sample-matched thesis; uncomment to restore.
+% \sloppy
+% \chapter{Background Details}
+% \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+% \section{Introduction}
+% 
+% This chapter presents the technical background required to follow the remainder of the thesis. It begins with an overview of the fake news landscape and the role machine learning and deep learning play in addressing it, then walks through the standard NLP preprocessing pipeline, the major text representation techniques used to convert raw text into numeric form, the classical machine learning classifiers historically applied to this task, the sequential deep learning models (LSTM and BiLSTM) that improved on them, and finally the transformer architecture and BERT, which form the core of the model proposed in Chapter~4.
+% 
+% \section{Fake News and the Role of Machine Learning}
+% 
+% Fake news detection sits at the intersection of NLP, ML, and social computing. At its core, the task is a text classification problem: given a piece of text (a headline, article body, or social media post), predict whether it represents genuine or fabricated/misleading news. What makes the problem hard in practice is that this classification decision often requires world knowledge, an understanding of context, source credibility, and sometimes multi-modal evidence (images, videos, metadata) that a text-only classifier does not have direct access to.
+% 
+% Machine learning and deep learning techniques have proven effective for this task because they can automatically learn discriminative patterns from large labelled datasets rather than relying on manually crafted rules. Classical ML algorithms such as Logistic Regression, Support Vector Machines (SVM), Naive Bayes, and Random Forest operate on hand-engineered statistical features extracted from text (most commonly TF-IDF vectors) and were the dominant approach before deep learning became practical for NLP at scale. Deep learning models, by contrast, learn their own feature representations directly from data, which allows them to capture more nuanced linguistic patterns, at the cost of requiring more data, compute, and careful tuning.
+% 
+% \section{NLP Preprocessing Pipeline}
+% 
+% Raw news text is noisy: it contains inconsistent casing, punctuation, HTML artifacts, and words that carry little discriminative signal. Before any feature extraction or model training can take place, the text must be cleaned and normalized. The standard NLP preprocessing pipeline used in this thesis consists of the following steps:
+% 
+% \begin{itemize}
+% \item \textbf{Noise Removal:} Stripping HTML tags, special characters, URLs, and other non-textual artifacts from the raw input.
+% \item \textbf{Lowercasing:} Converting all text to a consistent case so that, e.g., ``News'' and ``news'' are treated identically.
+% \item \textbf{Tokenization:} Splitting text into individual tokens (words or sub-word units), which form the atomic units consumed by downstream models.
+% \item \textbf{Stopword Removal:} Removing high-frequency, low-information words (e.g., ``the'', ``is'', ``and'') that do not contribute to distinguishing fake from real news.
+% \item \textbf{Stemming and Lemmatization:} Reducing words to their root or base form (e.g., ``running'' $\rightarrow$ ``run''), which reduces vocabulary size and helps models generalize across word forms.
+% \item \textbf{Padding / Truncation:} Normalizing the length of tokenized sequences to a fixed maximum length so that they can be processed in fixed-size batches by neural network models.
+% \end{itemize}
+% 
+% For transformer models such as BERT, tokenization is performed using a model-specific sub-word tokenizer (WordPiece), and two special tokens are introduced: a classification token, \texttt{[CLS]}, prepended to every sequence and used to aggregate sequence-level information, and a separator token, \texttt{[SEP]}, used to mark sequence boundaries. Each tokenized sequence is accompanied by an attention mask that indicates which positions correspond to real tokens (1) versus padding (0), so that the model does not attend to padded positions.
+% 
+% \section{Text Representation Techniques}
+% 
+% Once text has been cleaned and tokenized, it must be converted into a numeric representation before it can be consumed by a machine learning model. This thesis makes use of several representation techniques, of increasing representational richness:
+% 
+% \begin{itemize}
+% \item \textbf{Bag-of-Words (BoW):} Represents a document as an unordered multiset of its word counts, discarding grammar and word order entirely.
+% \item \textbf{TF-IDF (Term Frequency-Inverse Document Frequency):} Weights word counts by how informative a word is across the corpus, down-weighting common words and up-weighting rare, discriminative ones.
+% \item \textbf{Word2Vec:} Learns dense, fixed-length vector representations of words such that words appearing in similar contexts have similar vectors, capturing some notion of semantic similarity.
+% \item \textbf{GloVe (Global Vectors for Word Representation):} Learns word embeddings from global word-word co-occurrence statistics across a corpus, producing embeddings similar in spirit to Word2Vec but derived from a different (count-based) objective.
+% \item \textbf{BERT Contextual Embeddings:} Unlike the previous techniques, which assign a single fixed vector to each word regardless of context, BERT produces a different embedding for a word depending on its surrounding sentence, capturing polysemy and richer contextual meaning.
+% \end{itemize}
+% 
+% The first three (BoW, TF-IDF) are purely statistical and are typically paired with classical ML classifiers, while Word2Vec and GloVe provide dense embeddings suitable as input to sequential deep learning models such as LSTM/BiLSTM. BERT embeddings, being contextual, are used directly with transformer-based classifiers and, in the hybrid model studied in this thesis, are additionally passed into a BiLSTM layer.
+% 
+% \section{Classical Machine Learning Classifiers}
+% 
+% Before deep learning became the dominant paradigm for text classification, several classical supervised learning algorithms were widely applied to fake news detection using statistical text features:
+% 
+% \begin{itemize}
+% \item \textbf{Logistic Regression:} A linear model that estimates the probability of a binary outcome (real vs. fake) as a function of the input features; simple, fast, and interpretable.
+% \item \textbf{Support Vector Machine (SVM):} Finds a maximum-margin hyperplane that separates the two classes in feature space, and performs well on high-dimensional sparse text features such as TF-IDF vectors.
+% \item \textbf{Naive Bayes:} A probabilistic classifier based on Bayes' theorem with a (naive) assumption of conditional independence between features, historically popular for text classification due to its speed and reasonable performance with sparse features.
+% \item \textbf{Random Forest:} An ensemble of decision trees trained on bootstrapped samples of the data, which tends to be more robust to noise and overfitting than a single decision tree.
+% \end{itemize}
+% 
+% These models are computationally cheap and easy to interpret, but they treat text as an unordered collection of statistical features and cannot capture word order or long-range semantic dependencies, which fundamentally limits their ceiling of performance on nuanced classification tasks like fake news detection.
+% 
+% \section{Deep Learning Sequence Models: LSTM and BiLSTM}
+% 
+% Long Short-Term Memory (LSTM) networks are a class of Recurrent Neural Networks (RNNs) specifically designed to model sequential data while mitigating the vanishing gradient problem that plagues vanilla RNNs over long sequences. An LSTM cell maintains an internal memory state that is selectively updated, forgotten, and output at each time step through a set of learned gates (input, forget, and output gates), allowing the network to retain relevant information over longer spans of text than a standard RNN.
+% 
+% A standard LSTM processes a sequence in a single direction, typically left to right, meaning that at any given position, the model has only seen the preceding context. A Bidirectional LSTM (BiLSTM) addresses this limitation by running two LSTM layers over the input sequence in parallel, one processing it left-to-right and the other right-to-left, and concatenating (or otherwise combining) their hidden states at each position. This gives the BiLSTM access to both past and future context, which is particularly useful for understanding a word's role in a sentence.
+% 
+% Despite this improvement, BiLSTM networks still process text strictly sequentially at inference time, which limits parallelization during training, and their capacity to model very long-range dependencies remains weaker than attention-based architectures. Furthermore, as observed experimentally in Chapter~5, BiLSTM models trained with a limited number of epochs and without extensive hyperparameter tuning can converge poorly, resulting in substantially lower accuracy than transformer-based alternatives.
+% 
+% \section{Transformer Architecture and BERT}
+% 
+% The Transformer architecture dispenses with recurrence entirely and instead relies on a self-attention mechanism, which allows every token in a sequence to directly attend to every other token in a single layer, regardless of their distance in the sequence. This removes the sequential bottleneck of RNN-based models and enables far greater parallelization during training, while also making it easier to model long-range dependencies.
+% 
+% BERT (Bidirectional Encoder Representations from Transformers) is built from a stack of Transformer encoder layers (12 layers in the BERT-Base configuration) and is pre-trained on large unlabelled text corpora using two self-supervised objectives: masked language modelling (predicting randomly masked tokens from their context) and next sentence prediction. This pre-training allows BERT to learn deep, bidirectional, general-purpose language representations before it is ever exposed to a downstream task.
+% 
+% For a downstream classification task such as fake news detection, a pre-trained BERT model is \textit{fine-tuned}: the input news text is tokenized and fed through the pre-trained encoder, producing a contextual embedding for every token, including the special \texttt{[CLS]} token, which is conventionally used as an aggregate representation of the entire sequence. A lightweight classification head (typically a dropout layer followed by a fully connected layer with a softmax or sigmoid activation) is then trained on top of this representation to predict the real/fake label, while the underlying BERT weights are also updated (fine-tuned) using a comparatively small learning rate, since they are already well-initialized from pre-training.
+% 
+% In the hybrid architecture examined in this thesis (Chapter~4), rather than relying solely on the \texttt{[CLS]} token, the entire sequence of contextual token embeddings produced by BERT is passed into a BiLSTM layer, allowing the network to additionally model sequential dependencies over BERT's already contextualized representations before final classification.
+% 
+% \section{Summary}
+% 
+% This chapter has covered the technical foundation needed to understand the rest of the thesis: the standard NLP preprocessing pipeline, the range of text representation techniques from simple statistical counts to deep contextual embeddings, classical machine learning classifiers, the sequential LSTM/BiLSTM family of deep learning models, and the Transformer/BERT architecture that underlies the transformer-based models compared in this work. Chapter~3 builds on this foundation with a detailed review of related literature, and Chapter~4 describes how these building blocks are combined into the proposed fake news detection system.
+% 

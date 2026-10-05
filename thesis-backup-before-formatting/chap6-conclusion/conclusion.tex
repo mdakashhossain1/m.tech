@@ -1,0 +1,29 @@
+\sloppy
+\chapter{Conclusion and Future Direction}
+
+\section{Conclusion}
+
+This thesis has explored a transformer-based approach to fake news detection, alongside a systematic comparative analysis of a purely sequential deep learning model (BiLSTM), a purely transformer-based model (BERT), and a hybrid model that combines both (BERT + BiLSTM). Chapter~2 established the necessary background on NLP preprocessing, text representation, classical ML classifiers, and the LSTM/BiLSTM and Transformer/BERT model families. Chapter~3 reviewed nineteen related works spanning classical ML, hybrid deep learning, evidence-aware detection, benchmark datasets, and large language models. Chapter~4 proposed a layered, end-to-end detection pipeline together with a detailed BERT + BiLSTM classification architecture, and Chapter~5 evaluated all three models on the LIAR and ISOT benchmark datasets.
+
+The experimental results are unambiguous: the standalone BiLSTM model demonstrated low efficiency, achieving only 50\% accuracy and an F1-score of 0.3333, a result explained by the limited number of training epochs, insufficient hyperparameter tuning, and the inherent complexity of the fake news classification task. The BERT model, in contrast, substantially outperformed BiLSTM, reaching 95\% accuracy and an F1-score of 0.9499, owing to its pre-trained bidirectional contextual representations. The proposed hybrid BERT + BiLSTM model, designed to combine BERT's contextual understanding with BiLSTM's explicit sequence modelling, matched BERT's performance almost exactly but did not exceed it under the training conditions used in this study. This indicates that, in the present experimental setup, the additional sequential component does not add measurable value, and that BERT alone can be relied upon for fake news classification in this setting without the added architectural complexity of a hybrid model.
+
+More broadly, this work demonstrates that transformer-based models produce stable, reliable results for fake news detection across multiple benchmark datasets, and that such models are well suited to practical deployment in scenarios such as social media monitoring and automated fact-checking, given their strong and consistent generalization performance.
+
+\section{Future Research Direction}
+
+Although Large Language Models (LLMs) and Explainable AI (XAI) techniques were not part of the system design evaluated in this thesis, they represent clear and promising directions for future work.
+
+Future development of this system should investigate the incorporation of more advanced large language models, such as GPT-4, LLaMA~2, Mistral, and Gemini, into the detection pipeline. In particular, Retrieval-Augmented Generation (RAG) could allow the model to query verified databases such as Snopes, PolitiFact, and Wikipedia for supporting evidence in real time before making a classification decision, which would likely improve both performance and reliability when facing complex or context-dependent forms of misinformation such as satire, propaganda, and subtly manipulated content.
+
+A central limitation of the deep learning models evaluated in this thesis, as with deep learning models generally, is that they operate largely as black boxes: it is difficult for an end user to understand why a particular classification decision was made. Future work should incorporate Explainable AI (XAI) approaches, such as LIME or SHAP, for transparency. One promising direction is a two-stage pipeline in which an LLM (potentially assisted by retrieved evidence) first classifies the input, and a subsequent explanation-generation layer produces a human-readable rationale for the decision. Such a design is expected to offer both strong predictive accuracy and interpretability for end users such as journalists and fact-checkers who must ultimately act on the model's output.
+
+Beyond LLM integration and explainability, future work should also address practical deployment concerns, including:
+
+\begin{itemize}
+\item \textbf{Multilingual Detection:} Extending the proposed models beyond English to support fake news detection in multiple languages, particularly low-resource languages that are currently underserved by existing benchmark datasets.
+\item \textbf{Multi-modal Fake News Analysis:} Incorporating images, video, and metadata alongside text, since misinformation increasingly spans multiple media types.
+\item \textbf{Federated Learning:} Enabling collaborative model training across organizations or platforms without centralizing sensitive user or content data.
+\item \textbf{API and System Deployment:} Packaging the proposed pipeline as a deployable API or service suitable for integration into social media monitoring tools, browser extensions, or newsroom fact-checking workflows.
+\end{itemize}
+
+Pursuing these directions would extend the work presented in this thesis from a controlled, benchmark-driven comparative study toward a deployable, explainable, and continually evolving fake news detection system.

@@ -1,0 +1,77 @@
+\documentclass[12pt]{tuthesis}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{pbox}
+\usepackage{titlesec}
+\usepackage{lscape}
+\usepackage{float}
+
+%using packet for  algorithm
+\usepackage{algorithm2e}
+
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\graphicspath{
+{./chap0-preamble/}
+{./chap1-introduction/} 
+{./chap2-backrounddetails/}
+{./chap3-relatedwork/}
+{./chap4-proposedapproach/}
+{./chap5-experimentalresults/}
+}
+
+\begin{document}
+\setcounter{tocdepth}{2}
+%\setcounter{secnumdepth}{4}
+%\captionsetup[table]{labelfont=bf}
+\captionsetup[figure]{labelfont=bf}
+\pagenumbering{gobble}  %To Switch off the Page Numbering.%
+
+%%%%%%%%%%%%%%%%%%contents for preamble%%%%%%%%%%%%%%%%%
+\include{./chap0-preamble/coverpage}
+%\afterpage{\blankpage}
+\include{./chap0-preamble/dedication}
+\include{./chap0-preamble/abstract}
+\include{./chap0-preamble/declaration}
+\include{./chap0-preamble/certificateguide}
+\include{./chap0-preamble/certificatehead}
+\include{./chap0-preamble/certificatecoordinator}
+\include{./chap0-preamble/certificateexaminer}
+\include{./chap0-preamble/acknowledgment}
+\pagenumbering{roman}
+\tableofcontents
+\listoffigures
+\listoftables
+\listofalgorithms
+\include{./chap0-preamble/abbreviation}
+\include{./chap0-preamble/symbol}
+%%%%%%%%%%%%%%%%%% Ending contents for preamble %%%%%%%%%
+
+%%%%%%%%%%%%%%%%%% Reseting Header %%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{empty}
+\fancyhf{}
+\lhead{\ifthenelse{\isodd{\value{page}}}{\bf \small {\nouppercase\rightmark}}{\bf \small{\nouppercase\leftmark}}}
+\fancyfoot[C]{\thepage}
+\pagestyle{fancy}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{./chap1-introduction/introduction}
+\include{./chap2-backrounddetails/backrounddetails}
+\include{./chap3-relatedwork/relatedwork}
+\include{./chap4-proposedapproach/proposedapproach}
+\include{./chap5-experimentalresults/experimentalresults}
+\include{./chap6-conclusion/conclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{myabbrvnat}
+%\bibliographystyle{tuthesisbib}
+\bibliography{biblio}
+\include{./chap0-preamble/publication}
+
+\end{document} 

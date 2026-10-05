@@ -1,0 +1,138 @@
+\sloppy
+\chapter{Related Work}
+\addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
+\section{Introduction}
+
+This chapter reviews nineteen peer-reviewed articles that form the basis of this research. The selected articles have been organized thematically, starting with traditional machine learning techniques, moving through deep learning and hybrid architectures, evidence-aware and attention-based methods, benchmark dataset and survey papers, and finally the role of large language models and explainability. All the reviewed articles are summarized in Table~\ref{tab:litreview}, followed by a thematic discussion.
+
+\begin{longtable}{|p{0.19\textwidth}|p{0.19\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|}
+\caption{Comparative Literature Review of Fake News Detection Methods} \label{tab:litreview} \\
+\hline
+\textbf{Contribution} & \textbf{Method} & \textbf{Advantage} & \textbf{Disadvantage} & \textbf{Future Scope} \\ \hline
+\endfirsthead
+\hline
+\textbf{Contribution} & \textbf{Method} & \textbf{Advantage} & \textbf{Disadvantage} & \textbf{Future Scope} \\ \hline
+\endhead
+\hline
+\multicolumn{5}{r}{\small\textit{Continued on next page\ldots}} \\
+\endfoot
+\hline
+\endlastfoot
+Introduced FakeBERT, a BERT-based deep learning model specifically designed for fake news detection on social media platforms with parallel CNN layers integrated into BERT architecture \cite{Kaliyar2021FakeBERT}. &
+BERT + Parallel CNN layers for multi-scale feature extraction on LIAR and ISOT datasets \cite{Kaliyar2021FakeBERT}. &
+Achieved 98.90\% accuracy; effectively captures contextual semantic relationships in text; outperforms traditional ML models significantly \cite{Kaliyar2021FakeBERT}. &
+Computationally expensive; requires large GPU memory; limited to English language content only \cite{Kaliyar2021FakeBERT}. &
+Extend to multilingual detection; reduce computational cost using model distillation techniques \cite{Kaliyar2021FakeBERT}. \\ \hline
+Systematically compared multiple classical ML classifiers for fake news detection using linguistic and statistical text features extracted via TF-IDF \cite{Aphiwongsophon2021Detecting}. &
+Logistic Regression, SVM, Naive Bayes, Random Forest with TF-IDF feature vectors on benchmark news datasets \cite{Aphiwongsophon2021Detecting}. &
+Simple implementation; low computational cost; interpretable results; suitable for resource-constrained environments \cite{Aphiwongsophon2021Detecting}. &
+Lower accuracy compared to deep learning; cannot capture semantic context or word order in text \cite{Aphiwongsophon2021Detecting}. &
+Combine classical ML with deep learning features; incorporate metadata and social context signals \cite{Aphiwongsophon2021Detecting}. \\ \hline
+Proposed a hybrid deep learning architecture combining CNN for local feature extraction and RNN for sequential pattern learning in news text \cite{Nasir2021FakeNews}. &
+Hybrid CNN-RNN architecture with GloVe word embeddings trained on ISOT and FA-KES datasets \cite{Nasir2021FakeNews}. &
+Captures both local and sequential text features simultaneously; better generalization than single-model approaches \cite{Nasir2021FakeNews}. &
+Requires significant training data; slow inference time; struggles with short text like tweets and headlines \cite{Nasir2021FakeNews}. &
+Apply to real-time social media streams; incorporate attention mechanisms for better interpretability \cite{Nasir2021FakeNews}. \\ \hline
+Analyzed stylometric and linguistic style features that distinguish fake news from credible news using writing patterns and rhetorical structures \cite{Przybyla2020Capturing}. &
+Stylometric analysis with SVM classifier; features include sentence length, punctuation patterns, readability scores on news datasets \cite{Przybyla2020Capturing}. &
+Does not require external knowledge base; works purely on writing style; lightweight and fast inference \cite{Przybyla2020Capturing}. &
+Style-based features are easily mimicked by sophisticated fake news creators; low robustness against adversarial content \cite{Przybyla2020Capturing}. &
+Combine style features with semantic embeddings for more robust multi-feature detection systems \cite{Przybyla2020Capturing}. \\ \hline
+Proposed evidence-aware fake news detection by retrieving external web evidence and combining it with claim credibility assessment using attention networks \cite{Popat2019DeClarE}. &
+Attention-based LSTM with external web evidence retrieval and source credibility scoring on Snopes and PolitiFact datasets \cite{Popat2019DeClarE}. &
+Incorporate external knowledge for verification; attention mechanism provides interpretability; better performance on political claims \cite{Popat2019DeClarE}. &
+Dependent on external evidence availability; slow due to web retrieval; fails when evidence is unavailable or biased \cite{Popat2019DeClarE}. &
+Integrate real-time knowledge graphs; improve evidence retrieval with more reliable fact-checking APIs \cite{Popat2019DeClarE}. \\ \hline
+Developed a comprehensive fake news benchmark dataset incorporating news content, user social engagement, and spatiotemporal propagation features \cite{Shu2020FakeNewsNet}. &
+Multi-modal dataset construction combining news text, social network graphs, user profiles, and publisher credibility on PolitiFact and GossipCop \cite{Shu2020FakeNewsNet}. &
+Most comprehensive publicly available dataset; enables multi-modal detection research; includes social context signals \cite{Shu2020FakeNewsNet}. &
+Dataset collection is time-consuming; social context features require platform API access which is increasingly restricted \cite{Shu2020FakeNewsNet}. &
+Expand dataset to include video and image modalities; add multilingual fake news samples \cite{Shu2020FakeNewsNet}. \\ \hline
+Surveyed state-of-the-art deep learning techniques for fake news detection covering transformer models, graph neural networks, and multi-modal approaches \cite{Mehta2022RecentTrends}. &
+Systematic review of BERT, GPT, GNN, and multi-modal models across multiple benchmark datasets from 2017 to 2022 \cite{Mehta2022RecentTrends}. &
+Comprehensive coverage of recent methods; identifies research gaps; provides clear taxonomy of detection approaches \cite{Mehta2022RecentTrends}. &
+Survey only; no novel model proposed; coverage limited to English language studies \cite{Mehta2022RecentTrends}. &
+Develop unified evaluation benchmark; explore cross-lingual and low-resource fake news detection \cite{Mehta2022RecentTrends}. \\ \hline
+Combined BERT contextual embeddings with enhanced LSTM architecture for improved sequential and contextual understanding of fake news text \cite{Rai2022FakeNews}. &
+BERT + enhanced LSTM hybrid model with attention mechanism trained on LIAR and ISOT datasets \cite{Rai2022FakeNews}. &
+Superior performance over standalone BERT or LSTM; attention layer improves interpretability; robust to text length variations \cite{Rai2022FakeNews}. &
+High model complexity; longer training time; requires substantial labeled data for effective fine-tuning \cite{Rai2022FakeNews}. &
+Apply transfer learning to low-resource languages; integrate image features for multi-modal detection \cite{Rai2022FakeNews}. \\ \hline
+Investigated psychological and cognitive bias patterns embedded in fake news content using computational linguistics and psycholinguistic feature analysis \cite{CarrascoFarre2022Fingerprints}. &
+Psycholinguistic feature extraction using LIWC tool with ML classifiers; analysis of cognitive bias markers in fake vs.\ real news articles \cite{CarrascoFarre2022Fingerprints}. &
+Novel perspective combining psychology and NLP; interpretable features; applicable across domains and languages \cite{CarrascoFarre2022Fingerprints}. &
+Limited dataset size; psycholinguistic tools may not generalize across cultural and linguistic contexts \cite{CarrascoFarre2022Fingerprints}. &
+Extend psycholinguistic analysis to social media posts; develop cross-cultural misinformation detection models \cite{CarrascoFarre2022Fingerprints}. \\ \hline
+Proposed an optimized ensemble learning model using metaheuristic harmony search algorithm for automatic feature selection and classifier weight optimization \cite{Huang2020FakeNews}. &
+Ensemble of SVM, RF, and LR optimized using Self-Adaptive Harmony Search metaheuristic algorithm on multiple news datasets \cite{Huang2020FakeNews}. &
+Automatic feature selection reduces dimensionality; ensemble approach improves robustness; outperforms individual classifiers \cite{Huang2020FakeNews}. &
+High computational overhead due to metaheuristic optimization; complex implementation; not suitable for real-time detection \cite{Huang2020FakeNews}. &
+Apply neural architecture search for automated deep learning model optimization in fake news detection \cite{Huang2020FakeNews}. \\ \hline
+Provided a foundational data mining perspective on fake news detection on social media, proposing taxonomy of detection methods including knowledge-based, style-based, propagation-based, and credibility-based approaches \cite{Shu2017FakeNewsDetection}. &
+Survey and taxonomy of fake news detection approaches on social media platforms; analysis of linguistic, visual, and social context features \cite{Shu2017FakeNewsDetection}. &
+Comprehensive taxonomy; covers diverse detection paradigms; foundational reference for the research community \cite{Shu2017FakeNewsDetection}. &
+Survey only; no experimental results; limited coverage of deep learning and transformer-based models \cite{Shu2017FakeNewsDetection}. &
+Develop end-to-end multi-modal systems combining all four detection paradigms for improved accuracy \cite{Shu2017FakeNewsDetection}. \\ \hline
+Presented a comprehensive survey of fake news fundamental theories, detection methods, and future opportunities covering the full spectrum from fabrication to verification \cite{Zhou2020Survey}. &
+Systematic review of knowledge-based, style-based, propagation-based, and credibility-based detection methods across multiple benchmark datasets \cite{Zhou2020Survey}. &
+Thorough coverage of detection strategies; identifies open problems; provides structured framework for future research \cite{Zhou2020Survey}. &
+Survey only; does not propose a novel detection model; limited coverage of multimodal and LLM-based approaches \cite{Zhou2020Survey}. &
+Extend survey coverage to include graph neural networks, multimodal detection, and cross-lingual fake news models \cite{Zhou2020Survey}. \\ \hline
+Proposed CSI (Capture, Score, Integrate), a hybrid deep learning model combining text content features with user behaviour and propagation patterns for fake news detection \cite{Ruchansky2017CSI}. &
+Hybrid RNN model integrating article text (Capture), user response scoring, and propagation network modelling on CIKM benchmark dataset \cite{Ruchansky2017CSI}. &
+First to integrate content, user, and propagation signals; significantly outperforms text-only baselines; applicable to social media platforms \cite{Ruchansky2017CSI}. &
+Requires social engagement data which may be unavailable; complex multi-module architecture; limited generalization to non-social media news \cite{Ruchansky2017CSI}. &
+Extend to real-time streaming data; integrate image and video modalities; explore graph-based propagation modelling \cite{Ruchansky2017CSI}. \\ \hline
+Conducted a landmark empirical study on the spread of true and false news online across Twitter, revealing that false news spreads six times faster than true news and reaches more people \cite{Vosoughi2018Spread}. &
+Large-scale analysis of 126,000 news stories tweeted by three million users over ten years; statistical modelling of diffusion cascades \cite{Vosoughi2018Spread}. &
+Largest empirical study of its kind; provides strong motivation for automated fake news detection; highlights human-driven amplification of misinformation \cite{Vosoughi2018Spread}. &
+Observational study; does not propose a detection model; limited to Twitter platform data \cite{Vosoughi2018Spread}. &
+Extend analysis to other social media platforms; design detection systems that model propagation speed as a real-time detection signal \cite{Vosoughi2018Spread}. \\ \hline
+Introduced the LIAR benchmark dataset containing 12,836 manually labelled short statements from PolitiFact with six fine-grained truthfulness labels for fake news detection research \cite{Wang2017Liar}. &
+Benchmark dataset construction with metadata including speaker, subject, context, and party affiliation; baseline CNN and BiLSTM classifiers evaluated \cite{Wang2017Liar}. &
+First large-scale manually labelled fake news dataset; enables fine-grained classification; metadata-rich annotations support multi-feature modelling \cite{Wang2017Liar}. &
+Limited to political speech domain; fine-grained labels make classification harder; dataset may not generalize to social media news content \cite{Wang2017Liar}. &
+Extend dataset with image and video evidence; develop cross-domain transfer learning models trained on LIAR for general fake news detection \cite{Wang2017Liar}. \\ \hline
+Introduced LLaMA 2, a family of open-source large language models ranging from 7B to 70B parameters, enabling state-of-the-art language understanding and generation for downstream NLP tasks \cite{Touvron2023Llama2}. &
+Open-source transformer-based LLM family fine-tuned for dialogue and instruction following; evaluated on multiple NLP benchmarks against GPT-4 and other proprietary models \cite{Touvron2023Llama2}. &
+Freely available for research; competitive performance against closed models; enables privacy-preserving local deployment of large language models \cite{Touvron2023Llama2}. &
+Requires significant GPU resources for inference and fine-tuning; may still produce hallucinations; limited multilingual capability compared to GPT-4 \cite{Touvron2023Llama2}. &
+Fine-tune LLaMA 2 on fake news datasets; integrate with RAG pipelines to enable evidence-grounded fake news classification \cite{Touvron2023Llama2}. \\ \hline
+Proposed Retrieval-Augmented Generation (RAG), a framework combining parametric knowledge of pre-trained LLMs with non-parametric retrieval from external knowledge bases for knowledge-intensive NLP tasks \cite{Lewis2020RAG}. &
+RAG model combining dense passage retrieval with a sequence-to-sequence generator; evaluated on open-domain QA, fact verification, and knowledge-grounded dialogue tasks \cite{Lewis2020RAG}. &
+Enables LLMs to access up-to-date external evidence; reduces hallucination; improves factual accuracy without full model retraining \cite{Lewis2020RAG}. &
+Retrieval quality is highly dependent on the quality and coverage of the knowledge base; increased inference latency due to retrieval step \cite{Lewis2020RAG}. &
+Apply RAG to fake news detection by grounding classification decisions in retrieved evidence from verified fact-checking databases \cite{Lewis2020RAG}. \\ \hline
+Proposed LIME (Local Interpretable Model-agnostic Explanations), a technique for explaining the predictions of any black-box classifier by approximating it locally with an interpretable model \cite{Ribeiro2016LIME}. &
+Model-agnostic local surrogate modelling using perturbed samples to identify which input features most influenced a specific prediction across text, image, and tabular data \cite{Ribeiro2016LIME}. &
+Works with any classifier regardless of architecture; provides human-readable explanations; enables trust and debugging of black-box ML models \cite{Ribeiro2016LIME}. &
+Local explanations may not reflect global model behaviour; computationally expensive for large input spaces; sensitive to perturbation sampling strategy \cite{Ribeiro2016LIME}. &
+Apply LIME to explain fake news classification decisions; integrate with BERT-based models to highlight which words drove the REAL or FAKE prediction \cite{Ribeiro2016LIME}. \\ \hline
+Proposed SHAP (SHapley Additive exPlanations), a unified framework for interpreting model predictions using Shapley values from cooperative game theory to quantify each feature's contribution \cite{Lundberg2017SHAP}. &
+Unified additive feature attribution method grounded in Shapley values; applied to tree-based models, deep learning, and linear models for consistent global and local explanations \cite{Lundberg2017SHAP}. &
+Theoretically grounded in game theory; consistent and locally accurate; enables both global feature importance and individual prediction explanations \cite{Lundberg2017SHAP}. &
+Computationally expensive for large feature spaces and deep models; requires careful interpretation; may not capture feature interaction effects completely \cite{Lundberg2017SHAP}. &
+Apply SHAP to quantify word-level contributions in BERT fake news classifiers; combine with attention maps for multi-level explainability dashboards \cite{Lundberg2017SHAP}. \\ \hline
+\end{longtable}
+
+\section{Classical Machine Learning Approaches}
+
+Early work on automated fake news detection relied heavily on classical machine learning classifiers trained over statistical text features. \citet{Aphiwongsophon2021Detecting} systematically compared Logistic Regression, SVM, Naive Bayes, and Random Forest using TF-IDF features, concluding that such approaches are simple and computationally cheap but consistently trail deep learning methods in raw accuracy because they cannot capture word order or contextual meaning. \citet{Huang2020FakeNews} pushed this line of work further by using a metaheuristic harmony search algorithm for automatic feature selection and ensemble weight optimization, improving robustness at the cost of significant computational overhead. \citet{Przybyla2020Capturing} took a complementary stylometric approach, showing that writing-style features such as sentence length and punctuation patterns can distinguish fake from credible news without any external knowledge base, though such style-based signals are also the easiest for a sophisticated adversary to mimic.
+
+\section{Deep Learning and Hybrid Architectures}
+
+A second wave of research moved from statistical features to learned representations using deep neural networks. \citet{Nasir2021FakeNews} proposed a hybrid CNN-RNN architecture with GloVe embeddings, arguing that combining local (CNN) and sequential (RNN) feature extraction improves generalization over single-model approaches, though at the cost of slower inference and reduced effectiveness on very short texts such as tweets. \citet{Ruchansky2017CSI} extended this idea beyond pure text, proposing the CSI (Capture, Score, Integrate) model, which was among the first to jointly model article content, user response behaviour, and propagation patterns -- a reminder that text-only models such as the ones evaluated in this thesis omit potentially useful social-context signals. \citet{Popat2019DeClarE} introduced an evidence-aware detection approach that retrieves external web evidence and combines it with an attention-based LSTM for credibility scoring, improving interpretability but introducing a dependency on the availability and reliability of retrieved evidence.
+
+Closest in spirit to the model proposed in this thesis is the work of \citet{Rai2022FakeNews}, who combined BERT contextual embeddings with an enhanced LSTM architecture and an additional attention mechanism, reporting performance gains over standalone BERT or LSTM models on the LIAR and ISOT datasets. \citet{Kaliyar2021FakeBERT} similarly combined BERT with parallel CNN layers (FakeBERT), reporting up to 98.90\% accuracy, at the cost of substantial GPU memory and compute requirements. These works motivate the hybrid BERT + BiLSTM architecture investigated in Chapter~4 of this thesis, while also cautioning that hybridization does not automatically guarantee an improvement over a well-tuned standalone transformer, a nuance directly confirmed by the experimental results in Chapter~5.
+
+\section{Benchmark Datasets, Surveys, and Empirical Studies}
+
+Several works in the literature focus not on new models but on datasets, taxonomies, and empirical characterization of the misinformation problem itself. \citet{Wang2017Liar} introduced the LIAR benchmark dataset, comprising 12,836 manually labelled short political statements from PolitiFact with fine-grained truthfulness labels and rich metadata; LIAR is one of the two benchmark datasets used for evaluation in this thesis. \citet{Shu2020FakeNewsNet} released FakeNewsNet, a multi-modal dataset combining news content, social engagement, and propagation features across PolitiFact and GossipCop, while \citet{Shu2017FakeNewsDetection} and \citet{Zhou2020Survey} each provide broad taxonomies of detection approaches spanning knowledge-based, style-based, propagation-based, and credibility-based methods. \citet{Mehta2022RecentTrends} surveys more recent deep-learning-era techniques, including transformers, graph neural networks, and multi-modal approaches, identifying gaps that this thesis partially addresses through its systematic sequential-vs-transformer-vs-hybrid comparison. Separately, \citet{Vosoughi2018Spread} conducted a landmark large-scale empirical study of true and false news diffusion on Twitter, finding that false news spreads roughly six times faster than true news -- a finding frequently cited as core motivation for automated, real-time fake news detection research, including this thesis.
+
+\section{Large Language Models and Explainability}
+
+A final cluster of reviewed work looks beyond the BERT-era architectures studied experimentally in this thesis, toward large language models (LLMs) and explainability techniques that are identified as future research directions in Chapter~6. \citet{Touvron2023Llama2} introduced LLaMA 2, an open-source family of LLMs that could be fine-tuned on fake news data or combined with retrieval pipelines. \citet{Lewis2020RAG} proposed Retrieval-Augmented Generation (RAG), which grounds LLM outputs in retrieved evidence from external knowledge bases, directly applicable to grounding fake news classification decisions in verified fact-checking databases such as Snopes or PolitiFact. On the interpretability side, \citet{Ribeiro2016LIME} and \citet{Lundberg2017SHAP} introduced LIME and SHAP respectively -- model-agnostic explanation techniques that could be layered on top of a BERT-based fake news classifier to highlight which words or phrases drove a given REAL/FAKE prediction, directly addressing the black-box nature of the deep learning models evaluated in this thesis.
+
+\section{Summary}
+
+Taken together, this body of literature shows a clear progression from statistical, feature-engineered classical ML models, through hybrid deep learning architectures combining CNNs, RNNs, and external evidence, to transformer-based and BERT-hybrid models that dominate current state-of-the-art results, alongside a growing interest in large language models and explainability. It also surfaces two recurring open gaps that this thesis directly targets: (i) a lack of controlled, apples-to-apples comparison between purely sequential (BiLSTM), purely transformer-based (BERT), and hybrid (BERT + BiLSTM) models under identical training conditions and across multiple benchmark datasets, and (ii) limited attention to whether the added complexity of hybrid architectures is empirically justified. Chapter~4 describes the proposed system that is designed to address these gaps.

@@ -1,0 +1,110 @@
+\documentclass[12pt]{tuthesis}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{rotating}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{amsmath}
+\usepackage{pbox}
+\usepackage{titlesec}
+\usepackage{lscape}
+\usepackage{float}
+\definecolor{BibliographyPurple}{HTML}{7030A0}
+\hypersetup{urlcolor=BibliographyPurple}
+
+%using packet for  algorithm
+\usepackage{algorithm2e}
+
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+
+\graphicspath{
+{./chap0-preamble/}
+{./chap1-introduction/} 
+{./chap2-backrounddetails/}
+{./chap3-relatedwork/}
+{./chap4-proposedapproach/}
+{./chap5-experimentalresults/}
+}
+
+\setlength{\headheight}{14pt}
+\emergencystretch=2em
+\begin{document}
+\onehalfspacing
+\setlength{\parindent}{40pt}
+\setlength{\parskip}{12pt}
+\setcounter{tocdepth}{2}
+%\setcounter{secnumdepth}{4}
+%\captionsetup[table]{labelfont=bf}
+\captionsetup[figure]{labelfont=bf}
+\pagenumbering{gobble}  %To Switch off the Page Numbering.%
+\hypersetup{pageanchor=false}
+
+%%%%%%%%%%%%%%%%%%contents for preamble%%%%%%%%%%%%%%%%%
+\begingroup
+\include{./chap0-preamble/coverpage}
+\endgroup
+%\afterpage{\blankpage}
+\begingroup
+\include{./chap0-preamble/dedication}
+\endgroup
+\begingroup
+\include{./chap0-preamble/abstract}
+\endgroup
+\include{./chap0-preamble/declaration}
+\begingroup
+\include{./chap0-preamble/certificateguide}
+\endgroup
+\begingroup
+\include{./chap0-preamble/certificatehead}
+\endgroup
+\begingroup
+\include{./chap0-preamble/certificatecoordinator}
+\endgroup
+\begingroup
+\include{./chap0-preamble/certificateexaminer}
+\endgroup
+\include{./chap0-preamble/acknowledgment}
+\pagenumbering{roman}
+\tableofcontents
+\listoffigures
+\listoftables
+\listofalgorithms
+% Excluded to match the sample; source retained for reuse.
+% \include{./chap0-preamble/abbreviation}
+% Excluded to match the sample; source retained for reuse.
+% \include{./chap0-preamble/symbol}
+%%%%%%%%%%%%%%%%%% Ending contents for preamble %%%%%%%%%
+
+%%%%%%%%%%%%%%%%%% Reseting Header %%%%%%%%%%%%%%%%%%%%%%%%%
+\pagestyle{empty}
+\fancyhf{}
+\lhead{\ifthenelse{\isodd{\value{page}}}{\bf \small {\nouppercase\rightmark}}{\bf \small{\nouppercase\leftmark}}}
+\fancyfoot[C]{\thepage}
+\pagestyle{fancy}
+\clearpage
+\hypersetup{pageanchor=true}
+\pagenumbering{arabic}
+\setcounter{page}{1}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\include{./chap1-introduction/introduction}
+% Excluded to match the sample; source retained for reuse.
+% \include{./chap2-backrounddetails/backrounddetails}
+\include{./chap3-relatedwork/relatedwork}
+\include{./chap4-proposedapproach/proposedapproach}
+% Excluded to match the sample; source retained for reuse.
+% \include{./chap5-experimentalresults/experimentalresults}
+% Excluded to match the sample; source retained for reuse.
+% \include{./chap6-conclusion/conclusion}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\bibliographystyle{myabbrvnat}
+%\bibliographystyle{tuthesisbib}
+\setlength{\bibsep}{4pt}
+\bibliography{biblio}
+% Excluded to match the sample; source retained for reuse.
+% \include{./chap0-preamble/publication}
+
+\end{document} 

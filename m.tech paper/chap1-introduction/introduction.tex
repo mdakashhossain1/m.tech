@@ -1,0 +1,97 @@
+\sloppy
+\chapter{Introduction}
+
+Fake news detection is the automated process of identifying and categorizing false, misleading, or fabricated information that is deliberately or unintentionally portrayed as genuine news, using computational methods drawn from Natural Language Processing (NLP) and Machine Learning (ML)~\citep{Shu2020FakeNewsNet,Shu2017FakeNewsDetection}. The emergence and rapid growth of digital media platforms has led to an unprecedented increase in the volume, velocity, and reach of information generated and shared online every day. News, opinion, and rumour now travel through the same channels, often indistinguishable from one another at first glance, and readers are left to judge credibility with little more than a headline and a few seconds of attention.
+
+This state of affairs creates serious challenges, including the manipulation of public perception, interference with democratic processes such as elections, and a gradual erosion of confidence in previously trusted sources of information~\citep{Shu2020FakeNewsNet,Shu2017FakeNewsDetection}. Empirical studies have shown that false information spreads significantly faster and reaches a wider audience on social media than verified, factual news~\citep{Vosoughi2018Spread}. Given this pace, it becomes practically infeasible for human journalists and professional fact-checkers to manually verify every claim before it spreads beyond control.
+
+The consequences of unchecked misinformation extend well past individual misunderstanding; large-scale disinformation campaigns have been linked to social unrest, financial market manipulation, and public health harms. Consequently, building automated systems that can detect fake news reliably, at scale, and in near real time has become an important and urgent research problem, motivating the work undertaken in this thesis.
+
+\section{Challenges and Issues}
+
+The term ``fake news'' is not a single, homogeneous category of content. It is an umbrella term that spans multiple distinct classes of information, each with its own motive, structure, and linguistic signature. Broadly, the literature identifies five recurring types of fake news:
+
+\begin{itemize}
+\item \textbf{False News Stories:} Entirely fabricated information deliberately designed to deceive readers.
+\item \textbf{Manipulated News:} Genuine information that has been selectively edited, distorted, or taken out of context.
+\item \textbf{Satirical News:} Exaggerated or humorous content that is not intended to deceive but may be mistaken for factual reporting.
+\item \textbf{Clickbait:} News stories with sensational or misleading headlines that do not match their actual content.
+\item \textbf{Propaganda:} Biased or slanted information deliberately produced to advance a particular agenda or cause.
+\end{itemize}
+
+This diversity is precisely what makes automatic detection difficult. A model trained to recognize the linguistic markers of one category, such as sensational clickbait headlines, may fail entirely when confronted with subtly manipulated but factually-grounded reporting, or with satire that mimics a legitimate news outlet's tone. Detecting fake news therefore requires models that can capture deep contextual and semantic relationships in text, rather than relying on superficial keyword or stylistic cues alone.
+
+A second layer of difficulty comes from the modelling side. Classical machine learning algorithms such as Logistic Regression, Support Vector Machines (SVM), Naive Bayes, and Random Forest have historically been applied to this task using hand-engineered statistical features (e.g., TF-IDF vectors). These models are simple, interpretable, and computationally cheap, but they cannot capture word order or long-range semantic dependency, which limits their ceiling on accuracy. Sequential deep learning models such as Long Short-Term Memory (LSTM) and Bidirectional LSTM (BiLSTM) networks were introduced to address this gap by explicitly modelling sequences of words, yet their effectiveness can be undermined when contextual relationships are complex, when training data is limited, or when training time and hyperparameter tuning are restricted -- a limitation observed under the restricted training conditions used in this study.
+
+Transformer-based models, most notably BERT (Bidirectional Encoder Representations from Transformers), have been shown to outperform these earlier sequential approaches by producing deeply bidirectional, contextualized representations of text in a single forward pass~\citep{Kaliyar2021FakeBERT,Mehta2022RecentTrends}. Where sequential models process text step by step, BERT attends to the entire input context simultaneously through self-attention, giving it a considerably richer view of semantic relationships between words. This contrast between sequential and attention-based contextual modelling is one of the central technical challenges this thesis investigates.
+
+\section{Motivation of the Research}
+
+The motivation for this research is twofold. First, from a societal standpoint, the scale and speed at which misinformation now spreads make manual fact-checking an inadequate defence on its own; an automated, scalable first line of detection is necessary to support (not replace) human fact-checkers and platform moderators. Second, from a technical standpoint, the field has moved rapidly from classical statistical text representations (Bag-of-Words, TF-IDF) through static embeddings (Word2Vec, GloVe) to deep contextual embeddings (BERT), and it is not always clear, for a given dataset and task, whether the additional complexity of transformer and hybrid architectures is actually justified by a corresponding improvement in accuracy.
+
+This thesis is therefore motivated by the need to systematically and empirically compare a purely sequential deep learning model (BiLSTM), a purely transformer-based model (BERT), and a hybrid model that combines both (BERT + BiLSTM), across multiple benchmark datasets, so that the trade-offs between model complexity, training cost, and detection performance can be clearly understood. Such a comparison directly informs practical deployment decisions for real-world fake news detection systems, including social media monitoring pipelines and automated fact-checking assistants.
+
+\section{Research Objectives}
+
+The specific objectives of this research are as follows:
+
+\begin{enumerate}
+\item To design a multi-stage fake news detection pipeline that integrates NLP-based text preprocessing, multiple feature extraction/representation techniques, and a classification layer.
+\item To implement and train three classification models -- a standalone BiLSTM network, a fine-tuned BERT model, and a hybrid BERT + BiLSTM model -- under comparable training conditions.
+\item To evaluate and compare the three models using standard classification metrics (accuracy, precision, recall, and F1-score) as well as visual diagnostics (confusion matrices, ROC curves, precision--recall curves, and loss curves).
+\item To assess the generalization ability of the proposed models across multiple benchmark datasets, namely LIAR and ISOT.
+\item To identify the practical and architectural trade-offs between sequential, transformer-based, and hybrid models for fake news detection, and to outline directions for future improvement using large language models and explainable AI.
+\end{enumerate}
+
+\section{Thesis Contributions}
+
+This thesis makes the following key contributions:
+
+\begin{itemize}
+\item Proposes a layered architecture for fake news detection that combines NLP preprocessing, multiple feature extraction techniques, and a comparative classification framework.
+\item Presents a systematic experimental comparison of BiLSTM, BERT, and a hybrid BERT + BiLSTM model across multiple benchmark datasets.
+\item Demonstrates, with quantitative evidence, the superiority of transformer-based models over purely sequential deep learning models for this task under constrained training budgets.
+\item Investigates and documents the specific limitations of sequential models and their hybrid variants when trained with a small number of epochs and without extensive hyperparameter tuning.
+\item Identifies promising directions for future research, including the integration of Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), and Explainable AI (XAI) techniques into fake news detection pipelines.
+\end{itemize}
+
+\section{Thesis Organization}
+
+This thesis is organized into three chapters.
+
+\subsubsection*{Chapter 1: Introduction}
+This chapter introduces fake news detection, the challenges and motivation for the research, and the objectives and contributions of the thesis.
+
+\subsubsection*{Chapter 2: Related Work}
+This chapter reviews previous research on classical machine learning, deep learning, hybrid models, benchmark datasets, large language models, and explainability.
+
+\subsubsection*{Chapter 3: Proposed Approach}
+This chapter describes the dataset, data preprocessing, system pipeline, and construction of the BiLSTM, BERT, and hybrid BERT + BiLSTM models.
+
+% Previous six-chapter organization retained for reuse.
+% The remainder of this thesis is organized into six chapters, structured as follows.
+% 
+% \subsubsection*{Chapter 1: Introduction}
+% 
+% This chapter has introduced the problem of fake news detection, its societal significance, the challenges inherent in automatically distinguishing genuine from fabricated content, the motivation behind this research, and the specific objectives and contributions of the thesis.
+% 
+% \subsubsection*{Chapter 2: Background Details}
+% 
+% This chapter presents the foundational background required to understand the rest of the thesis, including an overview of the fake news landscape, the standard NLP text preprocessing pipeline, classical machine learning classifiers, sequential deep learning models (LSTM and BiLSTM), transformer architectures and BERT, and the text representation techniques (TF-IDF, Bag-of-Words, Word2Vec, GloVe, and contextual embeddings) used throughout this work.
+% 
+% \subsubsection*{Chapter 3: Literature Survey}
+% 
+% This chapter provides an extensive review of existing literature on fake news detection, organized thematically from classical machine learning techniques, through deep learning and hybrid architectures, to transformer-based and evidence-aware methods, benchmark dataset papers, and recent work on large language models and explainability.
+% 
+% \subsubsection*{Chapter 4: Proposed Approach}
+% 
+% This chapter describes the proposed multi-stage fake news detection system in detail, including the problem statement, the overall system model and pipeline, the detailed BERT + BiLSTM model architecture, the underlying algorithm, and the rationale for combining a transformer encoder with a sequential BiLSTM layer.
+% 
+% \subsubsection*{Chapter 5: Experimental Results}
+% 
+% This chapter presents the experimental setup, datasets, evaluation metrics, and hyperparameter configuration used to train and evaluate the three models, followed by a detailed presentation and discussion of the comparative results, confusion matrices, ROC curves, precision--recall curves, and training/validation loss curves.
+% 
+% \subsubsection*{Chapter 6: Conclusion and Future Direction}
+% 
+% This chapter summarizes the key findings of the thesis, discusses their implications for practical fake news detection systems, and outlines future research directions involving large language models, Retrieval-Augmented Generation, Explainable AI, multilingual and multi-modal detection, and federated deployment.
+% 

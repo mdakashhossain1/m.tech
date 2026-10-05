@@ -1,0 +1,2 @@
+model,loss,accuracy,precision,recall,f1_score
+local_llm_qwen2.5_1.5b_instruct_zero_shot,,0.7233333333333334,0.9135802469135802,0.49333333333333335,0.6406926406926406

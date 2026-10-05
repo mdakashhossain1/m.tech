@@ -1,0 +1,31 @@
+\chapter*{\centering Abstract}
+\onehalfspacing
+\setlength{\parskip}{6pt}
+
+This thesis investigates automated fake news detection using Natural Language Processing (NLP) and Machine Learning (ML). It compares Bidirectional Long Short-Term Memory (BiLSTM), fine-tuned Bidirectional Encoder Representations from Transformers (BERT), and a hybrid BERT + BiLSTM model on benchmark datasets, including LIAR and ISOT. The framework combines text preprocessing, representation, and classification; the hybrid feeds BERT's contextual token embeddings into a BiLSTM layer.
+
+Under the reported training conditions, BiLSTM achieves 50\% accuracy and an F1-score of 0.3333, while BERT achieves 95\% accuracy, precision of 0.9545, and recall of 0.9500. The hybrid matches BERT without measurable improvement. The study attributes BiLSTM's limited performance to few training epochs and restricted hyperparameter tuning. These findings support transformer-based representations under the conditions examined.
+
+Future extensions include Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), and Explainable AI (XAI) for evidence grounding and interpretation.
+
+\noindent
+{\bf Keywords:} Fake News Detection, Natural Language Processing, Machine Learning, Deep Learning, BERT, BiLSTM, Transformers, Explainable AI, Misinformation.
+
+% Original abstract retained for comparison and reuse.
+% 
+% \sloppy
+% \chapter*{\centering Abstract}
+% \onehalfspacing
+% 
+% Fake news detection is the task of employing computational tools such as Natural Language Processing (NLP) and Machine Learning (ML) to identify and categorize false or misleading information presented as genuine news. The rapid proliferation of misinformation through digital and social media channels poses serious threats to public perception, democratic governance, and the reliability of online information, creating a pressing need for automated detection systems capable of handling large volumes of unstructured text at scale.
+% 
+% This thesis proposes a layered fake news detection framework that combines NLP-based text preprocessing, multiple text representation techniques, and a comparative evaluation of classical, sequential, and transformer-based classification models. During preprocessing, noise removal, tokenization, stopword elimination, and lemmatization are applied to standardize raw news text before feature extraction. Text is then represented numerically using techniques ranging from TF-IDF and Bag-of-Words to Word2Vec, GloVe, and contextual BERT embeddings.
+% 
+% Three classification models are systematically compared on multiple benchmark datasets, namely LIAR and ISOT, to assess both raw performance and cross-dataset generalization: a standalone Bidirectional Long Short-Term Memory (BiLSTM) network, a fine-tuned Bidirectional Encoder Representations from Transformers (BERT) model, and a hybrid BERT + BiLSTM architecture in which BERT's contextual token embeddings are fed into a BiLSTM layer to additionally model sequential dependencies. Experimental results show that the standalone BiLSTM model performs poorly, achieving only 50\% accuracy and an F1-score of 0.3333, a limitation attributed to a restricted number of training epochs and the absence of extensive hyperparameter tuning. In contrast, the BERT model substantially outperforms the sequential baseline, reaching up to 95\% accuracy with a precision of 0.9545 and a recall of 0.9500. The hybrid BERT + BiLSTM model matches BERT's performance almost exactly, indicating that, under the present experimental setup, the additional sequential layer neither improves nor degrades the transformer's discriminative power.
+% 
+% These findings demonstrate the clear efficiency of transformer-based architectures for fake news detection over purely sequential deep learning models, and confirm that the resulting system is scalable enough for practical deployment in scenarios such as social media monitoring and automated fact-checking. The thesis concludes by outlining future directions that integrate Large Language Models (LLMs), Retrieval-Augmented Generation (RAG), and Explainable AI (XAI) techniques to further improve detection accuracy, evidence grounding, and the interpretability of model predictions for end users such as journalists and fact-checkers.
+% 
+% \vspace{0.5in}
+% \noindent
+% {\bf Keywords:} Fake News Detection, Natural Language Processing, Machine Learning, Deep Learning, BERT, BiLSTM, Transformers, Explainable AI, Misinformation.
+% 
