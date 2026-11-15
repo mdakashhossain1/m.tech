@@ -206,6 +206,33 @@ GRU + ResNet & 0.1179 & 0.9513 & 0.9672 & 0.9387 & 0.9528 \\ \hline
 
 All five models fall within 0.4 percentage points of each other in accuracy and 0.33 points in F1, so the added convolutional, residual, or second recurrent stage gives no meaningful gain over the standalone GRU. GRU+BiLSTM has the highest F1 (0.9560) and GRU+ResNet the lowest test loss (0.1179), but these differences are small. The hybrids trade precision against recall: GRU+BiLSTM has the highest precision (0.9694), while GRU+LSTM has the highest recall (0.9640). The standalone GRU collapsed to predicting the majority class when only its final hidden state was used; pooling over every time step resolved this. GRU+ResNet trained less stably, with validation accuracy dropping to 0.7526 at one epoch before recovering. These models, trained on short headlines with a small vocabulary, reach accuracy close to that of the fine-tuned BERT models in Table \ref{tab:comparison} with far smaller models.
 
+\subsection{Cross-Dataset Generalization}
+The in-domain scores above are measured on ISOT, whose headlines carry source artifacts such as the ``(Reuters)'' tag. To test whether the models learn the news content rather than these markers, we cleaned the source tags and URLs, removed duplicate titles, split each dataset 70/15/15 with stratification, and trained on one dataset while testing on the other. The second dataset is LIAR2, with labels 0--2 treated as fake and 3--5 as real. Every setting was repeated over three random seeds (five for the GRU), and Table \ref{tab:cross-dataset} reports the mean and standard deviation.
+
+\begin{table}[htbp]
+\centering
+\caption{Cross-dataset results (mean $\pm$ std over seeds). Cross-domain rows use the full other dataset as the test set.}
+\label{tab:cross-dataset}
+\begin{tabular}{llllll}
+\hline
+Model & Train & Test & Accuracy & F1 & AUC \
+\hline
+GRU & ISOT & ISOT (in-domain) & 0.962 $\pm$ 0.001 & 0.958 $\pm$ 0.002 & 0.993 \
+GRU & ISOT & LIAR2 (cross) & 0.532 $\pm$ 0.009 & 0.662 $\pm$ 0.013 & 0.466 \
+GRU & LIAR2 & LIAR2 (in-domain) & 0.680 $\pm$ 0.006 & 0.725 $\pm$ 0.004 & 0.749 \
+GRU & LIAR2 & ISOT (cross) & 0.475 $\pm$ 0.008 & 0.627 $\pm$ 0.004 & 0.681 \
+BERT & ISOT & ISOT (in-domain) & 0.984 $\pm$ 0.002 & 0.982 $\pm$ 0.002 & 0.999 \
+BERT & ISOT & LIAR2 (cross) & 0.504 $\pm$ 0.001 & 0.611 $\pm$ 0.001 & 0.472 \
+BERT & LIAR2 & LIAR2 (in-domain) & 0.694 $\pm$ 0.004 & 0.733 $\pm$ 0.013 & 0.770 \
+BERT & LIAR2 & ISOT (cross) & 0.460 $\pm$ 0.002 & 0.626 $\pm$ 0.001 & 0.562 \
+BERT & ISOT + LIAR2 & ISOT (in-domain) & 0.984 $\pm$ 0.001 & 0.982 $\pm$ 0.001 & 0.998 \
+BERT & ISOT + LIAR2 & LIAR2 (in-domain) & 0.693 $\pm$ 0.004 & 0.717 $\pm$ 0.009 & 0.772 \
+\hline
+\end{tabular}
+\end{table}
+
+Three findings follow. First, both models separate ISOT almost perfectly in-domain (BERT AUC 0.999) but fall to chance on LIAR2 (accuracy 0.50, AUC 0.47), and a model trained on LIAR2 falls below chance on ISOT. The high in-domain accuracy therefore reflects dataset-specific patterns more than transferable fake-news cues. Second, BERT gives only a small gain over the GRU on LIAR2 (F1 0.733 against 0.725), so a larger encoder does not by itself fix this. Third, training on both datasets keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, so mixing sources costs nothing in-domain, but we have not yet tested it on a third, unseen dataset. Closing the cross-domain gap is the main remaining work: stronger encoders, article-body input, retrieval-augmented classification, and explainability checks.
+
 \section{Result Discussion}
 
 The experimental outcomes show that the standalone BiLSTM architecture performed poorly on the primary dataset. Its precision, recall, and F1-score of 0.2500, 0.5000, and 0.3333 respectively indicate that it could not reliably distinguish fake news from real news, and its comparatively high final loss (0.6571) shows that the model failed to converge well within the training budget. This poor performance is best explained by the limited number of training epochs, the absence of extensive hyperparameter tuning, and the inherent complexity of the fake news classification task relative to the modelling capacity exercised here.

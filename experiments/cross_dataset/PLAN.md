@@ -16,4 +16,8 @@ All current models score about 95% on ISOT, which is likely inflated by source a
 6. Add the results to `paper/main.tex` and the thesis Chapter 5.
 
 ## Status
-- [ ] Step 1 script written, not yet run
+- [x] Step 1: GRU cross-dataset baseline run (5 seeds)
+- [x] Step 2 (partly): BERT fine-tuned on ISOT, LIAR2 and mixed (3 seeds each); BiLSTM and BERT+BiLSTM not re-run
+- [x] Step 3 (partly): mixed training done, ISOT accuracy kept at 0.984; still untested on a third dataset
+- [x] Step 6 (partly): cross-dataset table added to paper and thesis Chapter 5
+- [ ] Remaining: RoBERTa/DeBERTa, article-body input, LLM/RAG classification, LIME/SHAP explainability

@@ -144,10 +144,14 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     dev = device()
     print("device:", dev, "| model:", args.model, "| train:", args.train, flush=True)
-    rows = []
+    name = f"{args.model.replace('/', '_')}_{args.train}{args.tag}.csv"
+    rows = pd.read_csv(OUT / name).to_dict("records") if (OUT / name).exists() else []
+    finished = {r["seed"] for r in rows}
     for seed in range(args.seeds):
+        if seed in finished:
+            print(f"  seed {seed} already finished, skipping", flush=True)
+            continue
         rows += run(args, seed, dev)
-        name = f"{args.model.replace('/', '_')}_{args.train}{args.tag}.csv"
         pd.DataFrame(rows).to_csv(OUT / name, index=False)
     df = pd.DataFrame(rows)
     print(df.groupby("test")[["accuracy", "precision", "recall", "f1", "auc"]].agg(["mean", "std"]).round(4).to_string())
