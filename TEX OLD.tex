@@ -31,6 +31,7 @@ The objective of fake news detection is to employ computing tools such as NLP an
 In this paper, a layered model for fake news detection has been proposed that employs NLP for text preprocessing, feature extraction, and comparative analysis of multiple models. In the process of text preprocessing, noise reduction, tokenization, stopword elimination, and lemmatization are some of the processes applied to standardize textual information.
 
 This paper analyzes three fundamental models such as BiLSTM, BERT, and BERT + BiLSTM models on various benchmark datasets, such as LIAR and ISOT for assessing generalization ability. From the experimental analysis, it can be seen that the standalone model of BiLSTM demonstrates relatively poor performance since it gives only 50\% accuracy rate, where its F1 score is equal to 0.3333. This can be explained by the fact that the model has been trained only for a few epochs without performing extensive hyperparameter tuning. On the other hand, the BERT model demonstrates a much better performance than any sequential models because it gives up to 95\% accuracy, where the precision equals 0.9545, while recall equals 0.9500.
+A further set of experiments on headline-only input evaluates a standalone GRU and four GRU-based hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet); all five reach 95.1--95.5\% accuracy and F1 scores between 0.9528 and 0.9560, with GRU+BiLSTM performing best.
 The above results illustrate the efficiency of using transformer-based models in detecting fake news. The proposed system can be easily scalable and used for practical implementation in real-life scenarios like social media monitoring and fact-checking. Further research aims to incorporate large language models and explainable AI into the system.
 
 \keywords{Fake news detection, Natural Language Processing, Machine Learning, Explainable AI, Misinformation.}
@@ -90,6 +91,7 @@ This study makes the following key contributions:
 \item Suggests an architecture for detecting fake news using a multi-level approach that combines natural language processing preprocessing, feature extraction, and classification techniques.
 \item Compares different models including BiLSTM, BERT, and BERT with BiLSTM through various experiments on several datasets.
 \item Shows the superiority of transformer models in the fake news detection task.
+\item Benchmarks a standalone GRU against four GRU-based hybrid architectures (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet) under an identical data split and training protocol.
 \item Investigates the drawbacks of sequential models and their hybrid models under restricted training conditions.
 \item Indicates the promising areas for future research that focus on LLMs and XAI approaches.
 \end{itemize}
@@ -424,6 +426,37 @@ The zero-shot local LLM reaches 72.33\% accuracy without any task-specific train
 
 These preliminary results are consistent with, and directly motivate, the RAG-based direction already outlined in the Future Scope discussion below: grounding the LLM's classification in retrieved evidence from sources such as Snopes, PolitiFact, or Wikipedia, rather than relying on stylistic judgement alone, would be expected to particularly improve recall on subtler fake articles.
 
+\subsection{GRU-Based Hybrid Architectures}
+
+To examine whether lighter recurrent architectures can approach the transformer results, a standalone Gated Recurrent Unit (GRU) model and four GRU-based hybrids were trained on the ISOT-derived Kaggle corpus (23,481 fake and 21,417 real articles). Only the article headline was used as input. Headlines were lower-cased, stripped of non-alphanumeric characters and stopwords, tokenized with a 10,000-word vocabulary (12,000 for GRU+BiLSTM), and padded or truncated to 40 tokens. The data were split in a stratified 70:15:15 ratio, giving 31,428 training, 6,735 validation, and 6,735 test samples. All models were trained with the Adam optimizer (learning rate $10^{-3}$), binary cross-entropy loss, batch size 64, dropout 0.3, and at most 12 epochs, with early stopping on validation loss (patience 3, best weights restored).
+
+The five architectures are: (i) a single GRU layer followed by global max-pooling over all time steps; (ii) GRU followed by an LSTM layer; (iii) a 1D convolution and pooling stage feeding a GRU; (iv) GRU followed by a Bidirectional LSTM; and (v) two 1D residual convolutional blocks feeding a GRU. Table \ref{tab:gru-comparison} reports the test-set results.
+
+\begin{table}[H]
+\centering
+\caption{Test Performance of GRU and GRU-Hybrid Models (Headline-Only Input)}
+\label{tab:gru-comparison}
+\small
+\begin{tabular}{|l|c|c|c|c|c|}
+\hline
+\textbf{Model} & \textbf{Loss} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} \\ \hline
+GRU + BiLSTM & 0.1202 & 0.9546 & 0.9694 & 0.9429 & 0.9560 \\
+GRU & 0.1249 & 0.9531 & 0.9596 & 0.9503 & 0.9549 \\
+GRU + CNN & 0.1253 & 0.9534 & 0.9685 & 0.9415 & 0.9548 \\
+GRU + LSTM & 0.1290 & 0.9520 & 0.9454 & 0.9640 & 0.9546 \\
+GRU + ResNet & 0.1179 & 0.9513 & 0.9672 & 0.9387 & 0.9528 \\ \hline
+\end{tabular}
+\end{table}
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[width=0.88\textwidth]{experiments/results/comparison_metrics.png}
+\caption{Accuracy, Precision, Recall and F1 Score of the GRU and GRU-Hybrid Models}
+\label{fig:gru_metrics}
+\end{figure}
+
+All five models fall within 0.4 percentage points of each other in accuracy and 0.33 points in F1, so the added convolutional, residual, or second recurrent stage gives no meaningful gain over the standalone GRU. GRU+BiLSTM has the highest F1 (0.9560) and GRU+ResNet the lowest test loss (0.1179), but these differences are small. The hybrids trade precision against recall: GRU+BiLSTM has the highest precision (0.9694), while GRU+LSTM has the highest recall (0.9640). The standalone GRU collapsed to predicting the majority class when only its final hidden state was used; pooling over every time step resolved this. GRU+ResNet trained less stably, with validation accuracy dropping to 0.7526 at one epoch before recovering. These models, trained on short headlines with a small vocabulary, reach accuracy close to that of the fine-tuned BERT models in Table \ref{tab:comparison} with far smaller models.
+
 \section{Conclusion and Future Research Directions}
 
 The current study explores a state-of-the-art method for fake news identification through a transformer-based learning model. It also includes the comparative analysis of several classical and neural network algorithms. The research framework considers the efficiency of the BiLSTM model, BERT architecture, and hybrid architecture of BERT and BiLSTM in detecting fake news.
@@ -432,6 +465,8 @@ According to experimental results on different datasets, it is clear that the Bi
 This new model is meant to blend the two concepts to enable both contextual and sequential learning. However, it is observed that despite these features, there is no notable performance increase between the model and the baseline BERT model; this suggests that the addition of the sequential model component does not add value in the experimental setup currently employed. As such, BERT alone can be relied upon to classify fake news in this setting without need for the additional component.
 
 In general, transformer-based models have been shown to produce stable results in terms of fake news detection. Therefore, the implementation of the model is best suited for using BERT alone, since it gives high-level performance without added complexity.
+
+A further comparison of a standalone GRU with four GRU-based hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet) on headline-only input produced accuracies of 95.1--95.5\% and F1 scores of 0.9528--0.9560 (Table \ref{tab:gru-comparison}). The hybrids therefore offer no meaningful advantage over the standalone GRU, and all of them match the fine-tuned BERT models with far smaller models.
 
 Although LLMs and XAI techniques are not part of the main system design, a preliminary zero-shot experiment with a local LLM was conducted (Section 3.1, Table \ref{tab:llm-comparison}), which achieved 72.33\% accuracy without any task-specific training but with markedly lower recall than the fine-tuned transformer models, motivating the RAG- and evidence-grounding directions discussed below rather than replacing the current fine-tuned pipeline. Future developments on this system will involve using LLM-based reasoning to aid decision-making, incorporating explainability, expanding to support multi-language and multimodal data, as well as deploying it in a federated environment.
 
