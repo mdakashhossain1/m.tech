@@ -3,11 +3,11 @@
 \chapter*{\centering Abstract}
 \onehalfspacing
 
-The rapid spread of fake news on digital media makes manual fact-checking impractical, creating a need for automated detection systems. This thesis proposes a fake news detection framework that combines NLP-based text preprocessing with a comparative evaluation of three classification models: a standalone BiLSTM network, a fine-tuned BERT model, and a hybrid BERT + BiLSTM model.
+Fake news now spreads faster than people can check it, so manual fact-checking cannot keep up and automated detection is needed. This thesis builds a fake news detection framework that pairs NLP-based text preprocessing with a comparison of three classifiers: a standalone BiLSTM, a fine-tuned BERT model, and a hybrid BERT + BiLSTM model. A further set of GRU-based hybrids and a zero-shot test with a local large language model were added as extra baselines.
 
-The models were evaluated on the LIAR and ISOT benchmark datasets. BiLSTM performed poorly, reaching only 50\% accuracy, while BERT achieved 95\% accuracy with strong precision and recall. The hybrid BERT + BiLSTM model matched BERT's performance but did not exceed it, showing that the added sequential layer offered no further benefit in this setup.
+The models were evaluated on the LIAR and ISOT benchmark datasets. The BiLSTM reached only 50\% accuracy. BERT reached 95\% accuracy with strong precision and recall, and the hybrid BERT + BiLSTM matched BERT without exceeding it, so the added recurrent layer gave no further benefit in this setup.
 
-These results confirm that transformer-based models clearly outperform sequential deep learning models for fake news detection and are well suited to practical use in social media monitoring and fact-checking. Future work will explore Large Language Models, Retrieval-Augmented Generation, and Explainable AI to further improve accuracy and interpretability.
+A cross-dataset test with cleaned and deduplicated headlines qualifies these scores. Trained on ISOT, BERT scores 0.984 accuracy on ISOT but only 0.504 on LIAR2, and a GRU model behaves the same way, which suggests that the models pick up dataset-specific patterns more than transferable cues of fake news. Training on both datasets together keeps ISOT accuracy at 0.984 and gives an AUC of 0.772 on LIAR2. Transformer models still clearly outperform sequential models within a dataset, but robust detection across sources remains open. Future work will test stronger encoders, article-body input, Large Language Models, Retrieval-Augmented Generation, and Explainable AI.
 
 \vspace{0.5in}
 \noindent

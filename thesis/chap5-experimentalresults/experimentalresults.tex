@@ -3,39 +3,39 @@
 \addtocontents{toc}{\protect\setcounter{tocdepth}{2}}
 \section{Introduction}
 
-This chapter presents the experimental evaluation of the fake news detection framework proposed in Chapter~3. The three candidate classification models -- a standalone BiLSTM network, a fine-tuned BERT model, and the proposed hybrid BERT + BiLSTM model -- are trained under comparable conditions and evaluated on multiple benchmark datasets using standard classification metrics as well as visual diagnostics. The chapter is organized as follows: Section~4.2 describes the experimental setup, including evaluation metrics, datasets, and hyperparameter configuration; Section~4.3 presents the experimental output, including performance comparison tables and figures; and Section~4.4 discusses the results and their implications.
+This chapter evaluates the fake news detection framework proposed in Chapter~3. The three candidate models, a standalone BiLSTM, a fine-tuned BERT model, and the hybrid BERT + BiLSTM, are trained under comparable conditions and evaluated on several benchmark datasets with standard classification metrics and visual diagnostics. Section~4.2 describes the experimental setup (metrics, datasets, and hyperparameters). Section~4.3 presents the results in tables and figures, including the GRU experiments, a zero-shot test with a local LLM, and a cross-dataset evaluation. Section~4.4 discusses the results and what they imply.
 
 \section{Simulation Setup}
 
 \subsection{Evaluation Metrics}
 
-The designed fake news detection framework is evaluated using four well-established metrics commonly used in NLP and Information Retrieval (IR) studies, defined in terms of True Positives ($TP$), True Negatives ($TN$), False Positives ($FP$), and False Negatives ($FN$).
+The framework is evaluated with four standard metrics from NLP and Information Retrieval (IR), defined in terms of True Positives ($TP$), True Negatives ($TN$), False Positives ($FP$), and False Negatives ($FN$).
 
-Accuracy is the proportion of instances correctly classified among all instances:
+Accuracy is the share of all instances that are classified correctly:
 \[
 \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
 \]
 
-Precision is the proportion of instances correctly classified as fake news among all instances predicted as fake news:
+Precision is the share of instances predicted as fake news that really are fake:
 \[
 \text{Precision} = \frac{TP}{TP + FP}
 \]
 
-Recall is the proportion of actual fake news articles correctly identified by the model:
+Recall is the share of actual fake news articles that the model identifies:
 \[
 \text{Recall} = \frac{TP}{TP + FN}
 \]
 
-The F1-Score is the harmonic mean of precision and recall, providing a balanced measure that is especially useful under class imbalance:
+The F1-Score is the harmonic mean of precision and recall. It balances the two and is especially useful under class imbalance:
 \[
 \text{F1-Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
 \]
 
-In addition to these four scalar metrics, the confusion matrix, ROC curve, precision--recall curve, and training/validation loss curves are used to provide a more complete picture of each model's behaviour beyond a single aggregate number.
+Besides these four metrics, the confusion matrix, ROC curve, precision--recall curve, and training and validation loss curves show how each model behaves beyond a single aggregate number.
 
 \subsection{Dataset Description}
 
-All experimental evaluations are performed using benchmark datasets widely used in the fake news detection literature: LIAR~\citep{Wang2017Liar}, ISOT~\citep{ISOTDataset}, and FakeNewsNet~\citep{Shu2020FakeNewsNet}. Table~\ref{tab:datasets} summarizes the size and composition of each dataset. A Kaggle-hosted version of these benchmark datasets was used for training and evaluation.
+The experiments use three benchmark datasets that are common in the fake news detection literature: LIAR~\citep{Wang2017Liar}, ISOT~\citep{ISOTDataset}, and FakeNewsNet~\citep{Shu2020FakeNewsNet}. Table~\ref{tab:datasets} gives the size and composition of each. A Kaggle-hosted version of these datasets was used for training and evaluation.
 
 \begin{table}[h]
 \centering
@@ -50,11 +50,11 @@ FakeNewsNet & 23,196 & 11,941 & 11,255 & PolitiFact \& GossipCop \\ \hline
 \end{tabular}
 \end{table}
 
-Each dataset was split in an 80:10:10 ratio, corresponding to the training, validation, and testing sets respectively, in accordance with established conventions in the literature~\citep{Kaliyar2021FakeBERT,Rai2022FakeNews}.
+Each dataset was split 80:10:10 into training, validation, and test sets, following common practice in the literature~\citep{Kaliyar2021FakeBERT,Rai2022FakeNews}.
 
 \subsection{Hyperparameter Configuration}
 
-All three models were trained using hyperparameters appropriate to their architecture, so that the comparison remains fair while respecting each model family's characteristics. BERT-based models use a lower learning rate and smaller batch size than BiLSTM, since they are already pre-trained and only require fine-tuning, whereas the standalone BiLSTM model, trained from scratch, uses a higher learning rate. Table~\ref{tab:hyperparameters} lists the exact configuration used for each model.
+Each model was trained with hyperparameters suited to its architecture, which keeps the comparison fair while respecting how each family works. The BERT-based models are already pre-trained and only need fine-tuning, so they use a lower learning rate and a smaller batch size. The standalone BiLSTM is trained from scratch and uses a higher learning rate. Table~\ref{tab:hyperparameters} lists the configuration of each model.
 
 \begin{table}[H]
 \centering
@@ -79,7 +79,7 @@ Loss Function & Binary Crossentropy & Crossentropy & Crossentropy \\ \hline
 
 \section{Simulation Output}
 
-Table~\ref{tab:comparison} reports the results of training and evaluating the three models under identical conditions (3 epochs each) on the primary fake news dataset.
+Table~\ref{tab:comparison} reports the results for the three models trained under identical conditions (3 epochs each) on the primary fake news dataset.
 
 \begin{table}[h]
 \centering
@@ -95,7 +95,7 @@ Table~\ref{tab:comparison} reports the results of training and evaluating the th
 \end{tabular}
 \end{table}
 
-To assess generalization, Table~\ref{tab:comparison_extended} presents the comparative performance of all three models across two independent benchmark datasets, LIAR and ISOT.
+Table~\ref{tab:comparison_extended} compares the three models on two independent benchmark datasets, LIAR and ISOT.
 
 \begin{table}[h]
 \centering
@@ -114,7 +114,7 @@ ISOT & BERT+BiLSTM & 0.96 & 0.95 & 0.96 & 0.95 \\ \hline
 \end{tabular}
 \end{table}
 
-The confusion matrix in Figure~\ref{fig:confusion} compares predicted versus actual class labels for all three models across all datasets, and gives insight into model behaviour beyond a single accuracy number, particularly the balance between false positives (real news flagged as fake) and false negatives (fake news that goes undetected).
+The confusion matrix in Figure~\ref{fig:confusion} compares predicted and actual labels for all three models on all datasets. It shows the balance between false positives (real news flagged as fake) and false negatives (fake news that goes undetected), which a single accuracy number hides.
 
 \begin{figure}[h]
 \centering
@@ -123,7 +123,7 @@ The confusion matrix in Figure~\ref{fig:confusion} compares predicted versus act
 \label{fig:confusion}
 \end{figure}
 
-The ROC curve in Figure~\ref{fig:roc} plots the True Positive Rate against the False Positive Rate across classification thresholds; a curve closer to the top-left corner, and correspondingly a higher Area Under the Curve (AUC), indicates better discrimination between real and fake news.
+The ROC curve in Figure~\ref{fig:roc} plots the True Positive Rate against the False Positive Rate over classification thresholds. A curve closer to the top-left corner, and so a higher Area Under the Curve (AUC), means better separation of real and fake news.
 
 \begin{figure}[h]
 \centering
@@ -132,7 +132,7 @@ The ROC curve in Figure~\ref{fig:roc} plots the True Positive Rate against the F
 \label{fig:roc}
 \end{figure}
 
-The precision--recall (PR) curve in Figure~\ref{fig:pr} shows the trade-off between precision and recall at different classification thresholds, which is particularly informative under class imbalance.
+The precision--recall (PR) curve in Figure~\ref{fig:pr} shows the trade-off between precision and recall at different thresholds, which is especially informative under class imbalance.
 
 \begin{figure}[h]
 \centering
@@ -141,7 +141,7 @@ The precision--recall (PR) curve in Figure~\ref{fig:pr} shows the trade-off betw
 \label{fig:pr}
 \end{figure}
 
-Finally, the training/validation loss curves in Figure~\ref{fig:loss} show how each model's loss evolved over training epochs, indicating convergence behaviour and the degree of overfitting or underfitting.
+Finally, the loss curves in Figure~\ref{fig:loss} show how training and validation loss changed over the epochs, and so how well each model converged and whether it overfit or underfit.
 
 \begin{figure}[h]
 \centering
@@ -152,9 +152,9 @@ Finally, the training/validation loss curves in Figure~\ref{fig:loss} show how e
 
 \subsection{Preliminary Zero-Shot Evaluation with a Local LLM}
 
-To begin probing the LLM-based direction identified as future work in the conclusion chapter, a preliminary zero-shot experiment was conducted using a locally hosted large language model, rather than the fine-tuned BiLSTM/BERT/BERT+BiLSTM classifiers described above. The open-weight instruction-tuned model Qwen2.5-1.5B-Instruct \cite{Yang2024Qwen25} was run entirely on local CPU hardware via the Hugging Face \texttt{transformers} library \cite{Wolf2020Transformers}, with no fine-tuning, no retrieval augmentation, and no task-specific training of any kind. For each article, the model was given the headline and a truncated excerpt of the article body inside a system prompt instructing it to answer with exactly one word, REAL or FAKE, and its output was parsed and compared against the ground-truth label.
+As a first step toward the LLM direction named as future work in the conclusion chapter, a zero-shot experiment was run with a locally hosted large language model instead of the fine-tuned classifiers above. The open-weight instruction-tuned model Qwen2.5-1.5B-Instruct \cite{Yang2024Qwen25} ran entirely on a local CPU through the Hugging Face \texttt{transformers} library \cite{Wolf2020Transformers}, with no fine-tuning, no retrieval augmentation, and no task-specific training. For each article, the model received the headline and a truncated excerpt of the body in a system prompt that told it to answer with exactly one word, REAL or FAKE. The output was parsed and compared with the ground-truth label.
 
-The evaluation was performed on a stratified random sample of 300 articles (150 real, 150 fake) drawn from the same ISOT-derived real/fake news corpus \cite{ISOTDataset} used elsewhere in this study, so that the results are directly comparable in kind, if not in scale, with Table \ref{tab:comparison}. Table \ref{tab:llm-comparison} reports the resulting metrics.
+The test used a stratified random sample of 300 articles (150 real, 150 fake) from the same ISOT-derived corpus \cite{ISOTDataset} used elsewhere in this study. The results are comparable in kind, though not in scale, with Table \ref{tab:comparison}. Table \ref{tab:llm-comparison} gives the metrics.
 
 \begin{table}[H]
 \centering
@@ -171,15 +171,15 @@ Local LLM, Qwen2.5-1.5B-Instruct (zero-shot) & 0.7233 & 0.9136 & 0.4933 & 0.6407
 \end{tabular}
 \end{table}
 
-The zero-shot local LLM reaches 72.33\% accuracy without any task-specific training, which is well above a random baseline but clearly below the fine-tuned transformer models. Its precision (0.9136) is high, meaning that articles it flags as FAKE are usually genuinely fake, but its recall (0.4933) is comparatively low: the model fails to identify roughly half of the actual fake articles in the sample, instead defaulting to a REAL verdict when the writing style alone does not present an obvious red flag. This asymmetry is consistent with the model reasoning purely from surface linguistic style rather than from verified evidence, since well-written fabricated articles can be stylistically indistinguishable from genuine reporting without external fact-checking signals.
+Without any task-specific training, the zero-shot LLM reaches 72.33\% accuracy. That is well above chance and clearly below the fine-tuned transformers. Its precision (0.9136) is high, so articles it flags as FAKE are usually fake. Its recall (0.4933) is low: it misses about half of the fake articles and answers REAL whenever the writing style shows no obvious red flag. This pattern fits a model that judges surface style and not verified evidence, since a well-written fabrication can look the same as genuine reporting without external fact-checking signals.
 
-These preliminary results are consistent with, and directly motivate, the RAG-based direction already outlined in the Future Scope discussion below: grounding the LLM's classification in retrieved evidence from sources such as Snopes, PolitiFact, or Wikipedia, rather than relying on stylistic judgement alone, would be expected to particularly improve recall on subtler fake articles.
+These preliminary results support the RAG-based direction outlined in the Future Scope discussion. Grounding the LLM's decision in evidence retrieved from sources such as Snopes, PolitiFact, or Wikipedia, and not in stylistic judgement alone, would be expected to improve recall on subtler fake articles.
 
 \subsection{GRU-Based Hybrid Architectures}
 
-To examine whether lighter recurrent architectures can approach the transformer results, a standalone Gated Recurrent Unit (GRU) model and four GRU-based hybrids were trained on the ISOT-derived Kaggle corpus (23,481 fake and 21,417 real articles). Only the article headline was used as input. Headlines were lower-cased, stripped of non-alphanumeric characters and stopwords, tokenized with a 10,000-word vocabulary (12,000 for GRU+BiLSTM), and padded or truncated to 40 tokens. The data were split in a stratified 70:15:15 ratio, giving 31,428 training, 6,735 validation, and 6,735 test samples. All models were trained with the Adam optimizer (learning rate $10^{-3}$), binary cross-entropy loss, batch size 64, dropout 0.3, and at most 12 epochs, with early stopping on validation loss (patience 3, best weights restored).
+To see whether lighter recurrent architectures can approach the transformer results, a standalone Gated Recurrent Unit (GRU) model and four GRU-based hybrids were trained on the ISOT-derived Kaggle corpus (23,481 fake and 21,417 real articles). The input was the headline only. Headlines were lower-cased, stripped of non-alphanumeric characters and stopwords, tokenized with a 10,000-word vocabulary (12,000 for GRU+BiLSTM), and padded or truncated to 40 tokens. A stratified 70:15:15 split gave 31,428 training, 6,735 validation, and 6,735 test samples. All models used the Adam optimizer (learning rate $10^{-3}$), binary cross-entropy loss, batch size 64, dropout 0.3, and at most 12 epochs, with early stopping on validation loss (patience 3, best weights restored).
 
-The five architectures are: (i) a single GRU layer followed by global max-pooling over all time steps; (ii) GRU followed by an LSTM layer; (iii) a 1D convolution and pooling stage feeding a GRU; (iv) GRU followed by a Bidirectional LSTM; and (v) two 1D residual convolutional blocks feeding a GRU. Table \ref{tab:gru-comparison} reports the test-set results.
+The five architectures are: (i) a single GRU layer followed by global max-pooling over all time steps; (ii) a GRU followed by an LSTM layer; (iii) a 1D convolution and pooling stage feeding a GRU; (iv) a GRU followed by a Bidirectional LSTM; and (v) two 1D residual convolutional blocks feeding a GRU. Table \ref{tab:gru-comparison} gives the test-set results.
 
 \begin{table}[H]
 \centering
@@ -204,10 +204,10 @@ GRU + ResNet & 0.1179 & 0.9513 & 0.9672 & 0.9387 & 0.9528 \\ \hline
 \label{fig:gru_metrics}
 \end{figure}
 
-All five models fall within 0.4 percentage points of each other in accuracy and 0.33 points in F1, so the added convolutional, residual, or second recurrent stage gives no meaningful gain over the standalone GRU. GRU+BiLSTM has the highest F1 (0.9560) and GRU+ResNet the lowest test loss (0.1179), but these differences are small. The hybrids trade precision against recall: GRU+BiLSTM has the highest precision (0.9694), while GRU+LSTM has the highest recall (0.9640). The standalone GRU collapsed to predicting the majority class when only its final hidden state was used; pooling over every time step resolved this. GRU+ResNet trained less stably, with validation accuracy dropping to 0.7526 at one epoch before recovering. These models, trained on short headlines with a small vocabulary, reach accuracy close to that of the fine-tuned BERT models in Table \ref{tab:comparison} with far smaller models.
+The five models lie within 0.4 percentage points of each other in accuracy and 0.33 points in F1, so the extra convolutional, residual, or second recurrent stage gives no meaningful gain over the standalone GRU. GRU+BiLSTM has the highest F1 (0.9560) and GRU+ResNet the lowest test loss (0.1179), but the differences are small. The hybrids trade precision against recall: GRU+BiLSTM has the highest precision (0.9694) and GRU+LSTM the highest recall (0.9640). The standalone GRU collapsed to the majority class when only its final hidden state was used, and pooling over every time step fixed this. GRU+ResNet trained less stably, and its validation accuracy dropped to 0.7526 at one epoch before it recovered. Trained on short headlines with a small vocabulary, these models reach accuracy close to that of the fine-tuned BERT models in Table \ref{tab:comparison} while being far smaller.
 
 \subsection{Cross-Dataset Generalization}
-The in-domain scores above are measured on ISOT, whose headlines carry source artifacts such as the ``(Reuters)'' tag. To test whether the models learn the news content rather than these markers, we cleaned the source tags and URLs, removed duplicate titles, split each dataset 70/15/15 with stratification, and trained on one dataset while testing on the other. The second dataset is LIAR2, with labels 0--2 treated as fake and 3--5 as real. Every setting was repeated over three random seeds (five for the GRU), and Table \ref{tab:cross-dataset} reports the mean and standard deviation.
+The in-domain scores above come from ISOT, whose headlines carry source artifacts such as the ``(Reuters)'' tag. To test whether the models learn the news content and not these markers, we removed source tags and URLs, dropped duplicate titles, split each dataset 70/15/15 with stratification, and trained on one dataset while testing on the other. The second dataset is LIAR2, with labels 0--2 treated as fake and 3--5 as real. Every setting was repeated over three random seeds (five for the GRU). Table \ref{tab:cross-dataset} gives the mean and standard deviation.
 
 \begin{table}[htbp]
 \centering
@@ -231,18 +231,18 @@ BERT & ISOT + LIAR2 & LIAR2 (in-domain) & 0.693 $\pm$ 0.004 & 0.717 $\pm$ 0.009 
 \end{tabular}
 \end{table}
 
-Three findings follow. First, both models separate ISOT almost perfectly in-domain (BERT AUC 0.999) but fall to chance on LIAR2 (accuracy 0.50, AUC 0.47), and a model trained on LIAR2 falls below chance on ISOT. The high in-domain accuracy therefore reflects dataset-specific patterns more than transferable fake-news cues. Second, BERT gives only a small gain over the GRU on LIAR2 (F1 0.733 against 0.725), so a larger encoder does not by itself fix this. Third, training on both datasets keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, so mixing sources costs nothing in-domain, but we have not yet tested it on a third, unseen dataset. Closing the cross-domain gap is the main remaining work: stronger encoders, article-body input, retrieval-augmented classification, and explainability checks.
+Three findings follow. First, both models separate ISOT almost perfectly in-domain (BERT AUC 0.999) but fall to chance on LIAR2 (accuracy 0.50, AUC 0.47), and a model trained on LIAR2 falls below chance on ISOT. The high in-domain accuracy therefore reflects dataset-specific patterns more than transferable cues of fake news. Second, BERT gains only a little over the GRU on LIAR2 (F1 0.733 against 0.725), so a larger encoder does not fix the problem on its own. Third, training on both datasets keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, so mixing sources costs nothing in-domain, but this has not yet been tested on a third, unseen dataset. Closing the cross-domain gap is the main remaining work: stronger encoders, article-body input, retrieval-augmented classification, and explainability checks.
 
 \section{Result Discussion}
 
-The experimental outcomes show that the standalone BiLSTM architecture performed poorly on the primary dataset. Its precision, recall, and F1-score of 0.2500, 0.5000, and 0.3333 respectively indicate that it could not reliably distinguish fake news from real news, and its comparatively high final loss (0.6571) shows that the model failed to converge well within the training budget. This poor performance is best explained by the limited number of training epochs, the absence of extensive hyperparameter tuning, and the inherent complexity of the fake news classification task relative to the modelling capacity exercised here.
+The standalone BiLSTM performed poorly on the primary dataset. Its precision, recall, and F1-score of 0.2500, 0.5000, and 0.3333 show that it could not reliably tell fake news from real news, and its high final loss (0.6571) shows that it did not converge well within the training budget. The likely causes are the small number of training epochs, the lack of extensive hyperparameter tuning, and the difficulty of the task relative to the modelling capacity used here.
 
-By contrast, the BERT model performed substantially better, achieving 95\% accuracy with a precision of 0.9545, a recall of 0.9500, and an F1-score of 0.9499. Its much lower final loss (0.0686) indicates good convergence and strong discriminative power, attributable to BERT's pre-trained, bidirectional contextual representations. The hybrid BERT + BiLSTM model performed essentially identically to standalone BERT -- 95\% accuracy, 0.9545 precision, 0.9500 recall, and an F1-score of 0.9499 -- despite a slightly higher final loss (0.0998). This demonstrates that, under the present training configuration, adding a BiLSTM layer on top of BERT neither meaningfully improves nor degrades performance.
+BERT did much better, with 95\% accuracy, a precision of 0.9545, a recall of 0.9500, and an F1-score of 0.9499. Its far lower final loss (0.0686) shows good convergence and strong discrimination, which come from BERT's pre-trained, bidirectional contextual representations. The hybrid BERT + BiLSTM matched standalone BERT: 95\% accuracy, 0.9545 precision, 0.9500 recall, and an F1-score of 0.9499, with a slightly higher final loss (0.0998). Under the present training configuration, a BiLSTM layer on top of BERT neither improves nor degrades performance in any meaningful way.
 
-The cross-dataset results in Table~\ref{tab:comparison_extended} confirm that these trends generalize: on both LIAR and ISOT, BiLSTM again underperforms substantially relative to BERT and BERT + BiLSTM, while the two transformer-based models remain closely matched to each other, indicating that transformer-based representations generalize consistently and reliably across datasets of different size, domain, and label distribution.
+Table~\ref{tab:comparison_extended} shows the same ranking on each dataset separately. On both LIAR and ISOT, the BiLSTM is far behind BERT and BERT + BiLSTM, and the two transformer-based models stay close to each other. The transformer models therefore perform consistently on datasets that differ in size, domain, and label distribution. This is a within-dataset result. The cross-dataset test in Table~\ref{tab:cross-dataset} shows that a model trained on one dataset does not carry its accuracy over to the other. The LIAR scores in Table~\ref{tab:comparison_extended} also come from a different setup from the LIAR2 results (a different label mapping, cleaned headline-only input, and 2 epochs), so the two sets of numbers should not be compared directly.
 
-Despite the hybrid model's lack of measurable improvement over standalone BERT in this setting, these results should not be read as evidence that hybridization is without merit. The BiLSTM component in the hybrid model is layered on top of BERT's contextual embeddings specifically to capture additional sequential dependencies, a capability that may become more valuable with larger datasets, longer training schedules, and more extensive hyperparameter optimization -- conditions that were deliberately constrained in this study to keep the comparison tractable and fair across models. The visualizations in Figures~\ref{fig:confusion}--\ref{fig:loss} corroborate this discussion: BERT converges quickly with a small gap between training and validation loss (good generalization), BiLSTM converges slowly with a persistently higher loss (underfitting), and BERT + BiLSTM converges smoothly but without a clear advantage over BERT alone under the current setup.
+The hybrid showed no measurable gain over standalone BERT here, but this does not show that hybridization has no merit. The BiLSTM sits on top of BERT's contextual embeddings to capture further sequential dependencies. That ability may matter more with larger datasets, longer training, and more hyperparameter tuning, which were deliberately limited in this study to keep the comparison tractable and fair. Figures~\ref{fig:confusion}--\ref{fig:loss} agree with this reading. BERT converges quickly with a small gap between training and validation loss, which indicates good generalization. The BiLSTM converges slowly and its loss stays high, which indicates underfitting. BERT + BiLSTM converges smoothly but shows no clear advantage over BERT alone.
 
 \section{Summary}
 
-This chapter presented the experimental setup, datasets, hyperparameters, and results used to evaluate the proposed fake news detection models. The standalone BiLSTM model underperformed significantly relative to the transformer-based models, while BERT and the hybrid BERT + BiLSTM model performed comparably well and generalized consistently across the LIAR and ISOT datasets. These findings, and their implications for future work, are discussed further in Chapter~5.
+This chapter presented the experimental setup, datasets, hyperparameters, and results for the proposed models. The BiLSTM fell far behind the transformer-based models, while BERT and the hybrid BERT + BiLSTM performed equally well on both LIAR and ISOT. The GRU experiments showed that small recurrent models come close to BERT on ISOT headlines, and the zero-shot LLM reached 72.33\% accuracy. The cross-dataset test showed that all of these scores depend strongly on the dataset: models above 95\% on ISOT fall to about chance on LIAR2. Chapter~5 discusses these findings and their implications for future work.
