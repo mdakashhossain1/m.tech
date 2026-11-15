@@ -79,7 +79,7 @@ Loss Function & Binary Crossentropy & Crossentropy & Crossentropy \\ \hline
 
 \section{Simulation Output}
 
-Table~\ref{tab:comparison} reports the results for the three models trained under identical conditions (3 epochs each) on the primary fake news dataset.
+Table~\ref{tab:comparison} reports the test results of the three models on ISOT, trained under identical conditions (3 epochs each). The figures and tables in this section come from one set of runs on ISOT and LIAR2 (seed 0, a stratified 70:15:15 split, headline-only input, maximum length 64, batch size 32). The BiLSTM used randomly initialized embeddings over BERT WordPiece ids and not pre-trained GloVe vectors, so it differs from the hyperparameter table in embedding source and sequence length. The weights with the lowest validation loss were restored before testing. An earlier version of this thesis reported a BiLSTM at 50\% accuracy and BERT and BERT + BiLSTM at identical 95\% scores. Those numbers did not reproduce in this rerun and have been replaced. The loss column is the test loss.
 
 \begin{table}[h]
 \centering
@@ -89,13 +89,13 @@ Table~\ref{tab:comparison} reports the results for the three models trained unde
 \begin{tabular}{p{0.18\textwidth}ccccccp{0.18\textwidth}}
 \hline
  \textbf{Model} & \textbf{Final Loss} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} \\ \hline
- BiLSTM & 0.6571 & 0.5000 & 0.2500 & 0.5000 & 0.3333 \\
- BERT & 0.0686 & 0.9500 & 0.9545 & 0.9500 & 0.9499  \\
- BERT + BiLSTM Model & 0.0998 & 0.9500 & 0.9545 & 0.9500 & 0.9499 \\ \hline
+ BiLSTM & 0.0788 & 0.9714 & 0.9846 & 0.9523 & 0.9682 \\
+ BERT & 0.0770 & 0.9768 & 0.9886 & 0.9603 & 0.9742 \\
+ BERT + BiLSTM Model & 0.0657 & 0.9815 & 0.9914 & 0.9679 & 0.9795 \\ \hline
 \end{tabular}
 \end{table}
 
-Table~\ref{tab:comparison_extended} compares the three models on two independent benchmark datasets, LIAR and ISOT.
+Table~\ref{tab:comparison_extended} compares the three models on two benchmark datasets, ISOT and LIAR2.
 
 \begin{table}[h]
 \centering
@@ -105,16 +105,16 @@ Table~\ref{tab:comparison_extended} compares the three models on two independent
 \begin{tabular}{cccccc}
 \hline
 \textbf{Dataset} & \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} \\ \hline
-LIAR & BiLSTM & 0.50 & 0.25 & 0.50 & 0.33 \\
-LIAR & BERT & 0.95 & 0.95 & 0.95 & 0.95 \\
-LIAR & BERT+BiLSTM & 0.95 & 0.95 & 0.95 & 0.95 \\
-ISOT & BiLSTM & 0.78 & 0.76 & 0.80 & 0.78 \\
-ISOT & BERT & 0.96 & 0.96 & 0.95 & 0.95 \\
-ISOT & BERT+BiLSTM & 0.96 & 0.95 & 0.96 & 0.95 \\ \hline
+LIAR2 & BiLSTM & 0.664 & 0.685 & 0.771 & 0.726 \\
+LIAR2 & BERT & 0.689 & 0.763 & 0.669 & 0.713 \\
+LIAR2 & BERT+BiLSTM & 0.682 & 0.754 & 0.665 & 0.707 \\
+ISOT & BiLSTM & 0.971 & 0.985 & 0.952 & 0.968 \\
+ISOT & BERT & 0.977 & 0.989 & 0.960 & 0.974 \\
+ISOT & BERT+BiLSTM & 0.982 & 0.991 & 0.968 & 0.980 \\ \hline
 \end{tabular}
 \end{table}
 
-The plots in Figures~\ref{fig:confusion}--\ref{fig:loss} were generated from artificial predictions constructed to match the reported evaluation metrics. They illustrate the reported behaviour and are not raw outputs of the trained models.
+The plots in Figures~\ref{fig:confusion}--\ref{fig:loss} were generated from the real test-set predictions and training histories of the runs reported in Tables~\ref{tab:comparison} and~\ref{tab:comparison_extended}. The scripts that produce them are \texttt{train\_three\_models.py} and \texttt{make\_figures.py} in the repository.
 
 The confusion matrix in Figure~\ref{fig:confusion} compares predicted and actual labels for all three models on all datasets. It shows the balance between false positives (real news flagged as fake) and false negatives (fake news that goes undetected), which a single accuracy number hides.
 
@@ -143,7 +143,7 @@ The precision--recall (PR) curve in Figure~\ref{fig:pr} shows the trade-off betw
 \label{fig:pr}
 \end{figure}
 
-Finally, the loss curves in Figure~\ref{fig:loss} show how training and validation loss changed over the epochs, and so how well each model converged and whether it overfit or underfit.
+Finally, the loss curves in Figure~\ref{fig:loss} show how training and validation loss changed over the epochs. On ISOT the validation loss of BERT + BiLSTM is lowest at epoch 2 (0.060) and rises slightly at epoch 3 (0.067) while the training loss keeps falling. On LIAR2 the same model has its lowest validation loss after epoch 1 (0.566) and then rises to 0.594, so it starts to overfit after one epoch on the harder dataset.
 
 \begin{figure}[h]
 \centering
@@ -166,9 +166,9 @@ The test used a stratified random sample of 300 articles (150 real, 150 fake) fr
 \begin{tabular}{|l|c|c|c|c|}
 \hline
 \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} \\ \hline
-BiLSTM (fine-tuned) & 0.5000 & 0.2500 & 0.5000 & 0.3333 \\
-BERT (fine-tuned) & 0.9500 & 0.9545 & 0.9500 & 0.9499 \\
-BERT + BiLSTM (fine-tuned) & 0.9500 & 0.9545 & 0.9500 & 0.9499 \\
+BiLSTM (fine-tuned, ISOT) & 0.9714 & 0.9846 & 0.9523 & 0.9682 \\
+BERT (fine-tuned, ISOT) & 0.9768 & 0.9886 & 0.9603 & 0.9742 \\
+BERT + BiLSTM (fine-tuned, ISOT) & 0.9815 & 0.9914 & 0.9679 & 0.9795 \\
 Local LLM, Qwen2.5-1.5B-Instruct (zero-shot) & 0.7233 & 0.9136 & 0.4933 & 0.6407 \\ \hline
 \end{tabular}
 \end{table}
@@ -237,14 +237,14 @@ Three findings follow. First, both models separate ISOT almost perfectly in-doma
 
 \section{Result Discussion}
 
-The standalone BiLSTM performed poorly on the primary dataset. Its precision, recall, and F1-score of 0.2500, 0.5000, and 0.3333 show that it could not reliably tell fake news from real news, and its high final loss (0.6571) shows that it did not converge well within the training budget. The likely causes are the small number of training epochs, the lack of extensive hyperparameter tuning, and the difficulty of the task relative to the modelling capacity used here.
+The standalone BiLSTM did well on ISOT, with 0.9714 accuracy, 0.9846 precision, 0.9523 recall, and an F1-score of 0.9682. It converged without trouble (test loss 0.0788), so the weak BiLSTM result of the earlier version is not supported. On LIAR2 it reached only 0.664 accuracy, with high recall (0.771) and modest precision (0.685), which means it leans toward predicting the fake class.
 
-BERT did much better, with 95\% accuracy, a precision of 0.9545, a recall of 0.9500, and an F1-score of 0.9499. Its far lower final loss (0.0686) shows good convergence and strong discrimination, which come from BERT's pre-trained, bidirectional contextual representations. The hybrid BERT + BiLSTM matched standalone BERT: 95\% accuracy, 0.9545 precision, 0.9500 recall, and an F1-score of 0.9499, with a slightly higher final loss (0.0998). Under the present training configuration, a BiLSTM layer on top of BERT neither improves nor degrades performance in any meaningful way.
+BERT improved on the BiLSTM on both datasets, with 0.9768 accuracy and an F1-score of 0.9742 on ISOT (test loss 0.0770) and 0.689 accuracy and an F1-score of 0.713 on LIAR2. The gain is about 0.5 points on ISOT and 2.5 points on LIAR2, which is small. The hybrid BERT + BiLSTM was the best model on ISOT, with 0.9815 accuracy, 0.9914 precision, 0.9679 recall, an F1-score of 0.9795, and the lowest test loss (0.0657). On LIAR2 it scored 0.682 accuracy and an F1-score of 0.707, slightly below BERT alone. The BiLSTM head therefore gave a small gain on the easy dataset and none on the hard one.
 
-Table~\ref{tab:comparison_extended} shows the same ranking on each dataset separately. On both LIAR and ISOT, the BiLSTM is far behind BERT and BERT + BiLSTM, and the two transformer-based models stay close to each other. The transformer models therefore perform consistently on datasets that differ in size, domain, and label distribution. This is a within-dataset result. The cross-dataset test in Table~\ref{tab:cross-dataset} shows that a model trained on one dataset does not carry its accuracy over to the other. The LIAR scores in Table~\ref{tab:comparison_extended} also come from a different setup from the LIAR2 results (a different label mapping, cleaned headline-only input, and 2 epochs), so the two sets of numbers should not be compared directly.
+Table~\ref{tab:comparison_extended} shows that the ranking is not the same on the two datasets. This is a within-dataset result, and it comes from one seed, so differences of less than about one point should not be over-read. The cross-dataset test in Table~\ref{tab:cross-dataset} shows that a model trained on one dataset does not carry its accuracy over to the other. The LIAR2 rows in Table~\ref{tab:comparison_extended} come from a single seed and a 70:15:15 split, so they differ slightly from the three-seed means in the cross-dataset table (BERT 0.694 accuracy).
 
-The hybrid showed no measurable gain over standalone BERT here, but this does not show that hybridization has no merit. The BiLSTM sits on top of BERT's contextual embeddings to capture further sequential dependencies. That ability may matter more with larger datasets, longer training, and more hyperparameter tuning, which were deliberately limited in this study to keep the comparison tractable and fair. Figures~\ref{fig:confusion}--\ref{fig:loss} agree with this reading. BERT converges quickly with a small gap between training and validation loss, which indicates good generalization. The BiLSTM converges slowly and its loss stays high, which indicates underfitting. BERT + BiLSTM converges smoothly but shows no clear advantage over BERT alone.
+The hybrid beat standalone BERT on ISOT by about 0.5 points of accuracy and did not beat it on LIAR2. The BiLSTM sits on top of BERT's contextual embeddings to capture further sequential dependencies. Its value may depend on the dataset, and multiple seeds and tuned hyperparameters are needed to confirm any gain. These were limited in this study to keep the comparison tractable.
 
 \section{Summary}
 
-This chapter presented the experimental setup, datasets, hyperparameters, and results for the proposed models. The BiLSTM fell far behind the transformer-based models, while BERT and the hybrid BERT + BiLSTM performed equally well on both LIAR and ISOT. The GRU experiments showed that small recurrent models come close to BERT on ISOT headlines, and the zero-shot LLM reached 72.33\% accuracy. The cross-dataset test showed that all of these scores depend strongly on the dataset: models above 95\% on ISOT fall to about chance on LIAR2. Chapter~5 discusses these findings and their implications for future work.
+This chapter presented the experimental setup, datasets, hyperparameters, and results for the proposed models. On ISOT the BiLSTM, BERT, and hybrid BERT + BiLSTM reached 97.1\%, 97.7\%, and 98.2\% accuracy, and on LIAR2 they reached 66.4\%, 68.9\%, and 68.2\%. The GRU experiments showed that small recurrent models come close to BERT on ISOT headlines, and the zero-shot LLM reached 72.33\% accuracy. The cross-dataset test showed that all of these scores depend strongly on the dataset: models above 95\% on ISOT fall to about chance on LIAR2. Chapter~5 discusses these findings and their implications for future work.

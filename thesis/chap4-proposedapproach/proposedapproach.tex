@@ -73,7 +73,7 @@ Apply dropout, then pass the result through an output dense layer with sigmoid a
 
 \subsection{Design Rationale: Why Combine BERT and BiLSTM?}
 
-The reason for combining BERT and BiLSTM is not that BiLSTM performs poorly alone, although it does under the training conditions used in this thesis (Chapter~4). The two model families have complementary strengths. BERT captures context and semantics through its bidirectional Transformer design and self-attention, but it aggregates sequence-level information through attention and not through explicit sequence modelling of the kind recurrent networks perform.
+The reason for combining BERT and BiLSTM is not that BiLSTM performs poorly alone. The two model families have complementary strengths. BERT captures context and semantics through its bidirectional Transformer design and self-attention, but it aggregates sequence-level information through attention and not through explicit sequence modelling of the kind recurrent networks perform.
 
 BiLSTM is built to model sequences and positional dependencies, and it reads its input in both directions. In the hybrid, BERT acts as a contextual feature extractor that produces informative token-level embeddings. Instead of depending only on the \texttt{[CLS]} token, the whole sequence of embeddings goes into the BiLSTM, which adds explicit sequential modelling on top of BERT's contextual representations.
 

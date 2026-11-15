@@ -30,7 +30,7 @@ Fake news detection uses computing tools such as NLP and ML to identify and cate
 
 This paper proposes a layered model for fake news detection. It uses NLP for text preprocessing (noise reduction, tokenization, stopword elimination, and lemmatization), then feature extraction, and a comparison of several models.
 
-Three models, a BiLSTM, BERT, and a hybrid BERT + BiLSTM, are evaluated on the LIAR and ISOT benchmark datasets. The standalone BiLSTM performs poorly, with 50\% accuracy and an F1 score of 0.3333, probably because it was trained for only a few epochs without extensive hyperparameter tuning. BERT performs far better than the sequential model, with 95\% accuracy, a precision of 0.9545, and a recall of 0.9500. A further set of experiments on headline-only input evaluates a standalone GRU and four GRU-based hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet). All five reach 95.1--95.5\% accuracy and F1 scores between 0.9528 and 0.9560, and GRU+BiLSTM is the best of them.
+Three models, a BiLSTM, BERT, and a hybrid BERT + BiLSTM, are evaluated on the ISOT and LIAR2 benchmark datasets with a single seed, three epochs, and headline-only input. On ISOT the three models reach 97.1\%, 97.7\%, and 98.2\% accuracy (F1 0.968, 0.974, and 0.980), and the hybrid is the best of them by a small margin. On LIAR2 they reach only 66.4\%, 68.9\%, and 68.2\% accuracy, with BERT slightly ahead. A further set of experiments on headline-only input evaluates a standalone GRU and four GRU-based hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet). All five reach 95.1--95.5\% accuracy and F1 scores between 0.9528 and 0.9560, and GRU+BiLSTM is the best of them.
 
 A cross-dataset test on cleaned, deduplicated headlines qualifies these scores. Trained on ISOT, BERT reaches 0.984 accuracy on ISOT but only 0.504 on LIAR2, and the GRU behaves the same way. Transformer-based models are therefore the strongest within a dataset, but the models learn dataset-specific patterns, and detection across sources remains an open problem. The proposed system can be scaled for use in social media monitoring and fact-checking. Future work will add large language models and explainable AI.
 
@@ -78,7 +78,7 @@ An NLP preprocessing step cleans and normalizes the news text through tokenizati
 
 The feature extraction layer represents the text with TF-IDF, Bag-of-Words, Word2Vec, GloVe, and BERT's contextual embeddings. These representations capture both statistical and semantic properties of the text.
 
-The classification layer was analyzed with several models: BiLSTM, BERT, and a combination of BERT + BiLSTM. The BiLSTM obtains poor results compared with the others, possibly because of the small number of training epochs, insufficient fine-tuning, and the complexity of the dataset. BERT performs best because it uses pre-trained contextual embeddings. BERT and BERT + BiLSTM show no significant difference.
+The classification layer was analyzed with several models: BiLSTM, BERT, and a combination of BERT + BiLSTM. On ISOT all three work well, and the BERT-based models are slightly ahead of the BiLSTM. On LIAR2 the scores are much lower and the differences are small. BERT + BiLSTM is the best model on ISOT, while BERT is the best on LIAR2.
 
 Finally, the output layer labels the input as \textit{real} or \textit{fake} and gives a confidence estimate. A reporting mechanism produces an output that is easy to read.
 
@@ -317,10 +317,10 @@ FakeNewsNet & 23,196 & 11,941 & 11,255 & PolitiFact \& GossipCop \\ \hline
 \end{tabular}
 \end{table}
 
-Each dataset was split 80:10:10 into training, validation, and test sets, following common practice in the literature \cite{Kaliyar2021FakeBERT,Rai2022FakeNews}.
+The figures and tables in this subsection come from one set of runs on ISOT and LIAR2 (seed 0, a stratified 70:15:15 split, headline-only input, maximum length 64, batch size 32). The BiLSTM used randomly initialized embeddings over BERT WordPiece ids and not pre-trained GloVe vectors, so it differs from the hyperparameter table in embedding source and sequence length. The weights with the lowest validation loss were restored before testing. Earlier drafts of this paper reported a BiLSTM at 50\% accuracy and BERT and BERT + BiLSTM at identical 95\% scores. Those numbers did not reproduce in this rerun and have been replaced.
 
 
-Table \ref{tab:comparison} gives the results for the three models on the fake news dataset. For a fair comparison, all three were trained for 3 epochs under similar conditions.
+Table \ref{tab:comparison} gives the test results of the three models on ISOT. For a fair comparison, all three were trained for 3 epochs under the same conditions. The loss column is the test loss.
 
 \begin{table}[h]
 \centering
@@ -330,13 +330,13 @@ Table \ref{tab:comparison} gives the results for the three models on the fake ne
 \begin{tabular}{p{0.18\textwidth}ccccccp{0.18\textwidth}}
 \hline
  \textbf{Model} & \textbf{Final Loss} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} \\ \hline
- BiLSTM & 0.6571 & 0.5000 & 0.2500 & 0.5000 & 0.3333 \\ 
- BERT & 0.0686 & 0.9500 & 0.9545 & 0.9500 & 0.9499  \\ 
- BERT + BiLSTM Model & 0.0998 & 0.9500 & 0.9545 & 0.9500 & 0.9499 \\ \hline
+ BiLSTM & 0.0788 & 0.9714 & 0.9846 & 0.9523 & 0.9682 \\ 
+ BERT & 0.0770 & 0.9768 & 0.9886 & 0.9603 & 0.9742 \\ 
+ BERT + BiLSTM Model & 0.0657 & 0.9815 & 0.9914 & 0.9679 & 0.9795 \\ \hline
 \end{tabular}
 \end{table}
 
-Table \ref{tab:comparison_extended} compares the models on two benchmark datasets (LIAR and ISOT) and shows the same trends on each.
+Table \ref{tab:comparison_extended} compares the models on the two benchmark datasets (ISOT and LIAR2). The models separate ISOT well and reach much lower scores on LIAR2.
 
 \begin{table}[h]
 \centering
@@ -346,26 +346,26 @@ Table \ref{tab:comparison_extended} compares the models on two benchmark dataset
 \begin{tabular}{cccccc}
 \hline
 \textbf{Dataset} & \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} \\ \hline
-LIAR & BiLSTM & 0.50 & 0.25 & 0.50 & 0.33 \\
-LIAR & BERT & 0.95 & 0.95 & 0.95 & 0.95 \\
-LIAR & BERT+BiLSTM & 0.95 & 0.95 & 0.95 & 0.95 \\ 
-ISOT & BiLSTM & 0.78 & 0.76 & 0.80 & 0.78 \\
-ISOT & BERT & 0.96 & 0.96 & 0.95 & 0.95 \\
-ISOT & BERT+BiLSTM & 0.96 & 0.95 & 0.96 & 0.95 \\ \hline
+LIAR2 & BiLSTM & 0.664 & 0.685 & 0.771 & 0.726 \\
+LIAR2 & BERT & 0.689 & 0.763 & 0.669 & 0.713 \\
+LIAR2 & BERT+BiLSTM & 0.682 & 0.754 & 0.665 & 0.707 \\ 
+ISOT & BiLSTM & 0.971 & 0.985 & 0.952 & 0.968 \\
+ISOT & BERT & 0.977 & 0.989 & 0.960 & 0.974 \\
+ISOT & BERT+BiLSTM & 0.982 & 0.991 & 0.968 & 0.980 \\ \hline
 \end{tabular}
 \end{table}
 
-The standalone BiLSTM performed poorly on the dataset. Its precision, recall, and F1-score of 0.2500, 0.5000, and 0.3333 show that it could not tell fake news from true news accurately. Its large loss (0.6571) shows that it did not converge within the small number of training epochs. The likely causes are too few training epochs, no hyperparameter optimization, and the complexity of fake news datasets.
+The standalone BiLSTM did well on ISOT, with 0.9714 accuracy, 0.9846 precision, 0.9523 recall, and an F1-score of 0.9682. It converged without trouble (test loss 0.0788), so the weak BiLSTM result of the earlier draft is not supported. On LIAR2 it reached only 0.664 accuracy, with high recall (0.771) and modest precision (0.685), which means it leans toward predicting the fake class.
 
-BERT gave better results, with accuracy, precision, recall, and F1-score of 95\%, 0.9545, 0.9500, and 0.9499. Its much lower training loss (0.0686) shows that it converged well and discriminated strongly, because language pre-training lets BERT detect deep bidirectional contextual relations in text.
+BERT improved on the BiLSTM on both datasets, with 0.9768 accuracy and an F1-score of 0.9742 on ISOT (test loss 0.0770) and 0.689 accuracy and an F1-score of 0.713 on LIAR2. The gain over the BiLSTM is about 0.5 points on ISOT and 2.5 points on LIAR2, which is small. Language pre-training seems to help most where the text is hard, but a single seed cannot show that the differences are reliable.
 
-The combination of BERT and BiLSTM performed equally well, with 95\% accuracy, 0.9545 precision, 0.9500 recall, and an F1-score of 0.9499. Its training loss is slightly higher (0.0998) than that of BERT alone, but the evaluation scores are unchanged. The BiLSTM therefore did not improve performance significantly, and it did not harm it either.
+The combination of BERT and BiLSTM was the best model on ISOT, with 0.9815 accuracy, 0.9914 precision, 0.9679 recall, an F1-score of 0.9795, and the lowest test loss (0.0657). On LIAR2 it scored 0.682 accuracy and an F1-score of 0.707, slightly below BERT alone. The BiLSTM head therefore gave a small gain on the easy dataset and none on the hard one.
 
-Table \ref{tab:comparison_extended} shows the same pattern on LIAR and ISOT separately, so the transformer models perform consistently within each dataset. This is a within-dataset result. The cross-dataset test later in this section shows that it does not carry over from one dataset to another.
+Table \ref{tab:comparison_extended} shows that the ranking is not the same on the two datasets. This is a within-dataset result, and it comes from one seed, so differences of less than about one point should not be over-read. The cross-dataset test later in this section shows that the high ISOT scores do not carry over from one dataset to another.
 
-The hybrid did not beat BERT alone in the current setting, but this does not show that hybrid models lack merit. The BiLSTM module sits on top of BERT's contextual embeddings to detect sequences in the data. It may be more useful with larger datasets, more epochs, and tuned hyperparameters, so the combination may perform better once it is optimized.
+The hybrid beat BERT alone on ISOT by about 0.5 points of accuracy and did not beat it on LIAR2. The BiLSTM module sits on top of BERT's contextual embeddings to detect sequences in the data. Its value may depend on the dataset, and multiple seeds and tuned hyperparameters are needed to confirm any gain.
 
-The plots below were generated from artificial predictions constructed to match the reported evaluation metrics. They illustrate the reported behaviour and are not raw outputs of the trained models.
+The plots below were generated from the real test-set predictions and training histories of the runs reported in Tables \ref{tab:comparison} and \ref{tab:comparison_extended}. The scripts that produce them are \texttt{train\_three\_models.py} and \texttt{make\_figures.py} in the repository.
 
 The confusion matrix compares predicted class values with actual values and has four elements: TP, TN, FP, and FN. It shows how the model behaves beyond accuracy alone. In fake news detection, the goal is to reduce false positives, where real news is classified as fake, and also to avoid false negatives, where fake news goes undetected. Fig. 2 shows the confusion matrices of BERT, BiLSTM, and BERT+BiLSTM for all datasets.
 
@@ -376,7 +376,7 @@ The confusion matrix compares predicted class values with actual values and has 
 \label{fig:confusion}
 \end{figure}
 
-The ROC curve plots the True Positive Rate (sensitivity) against the False Positive Rate over various classification thresholds and shows how well the model separates true from false news. The closer the curve lies to the top left, the better the model. The area under the curve (AUC) summarizes discrimination in one number: values near 1.0 mean a very good classifier and 0.5 means a random one. The higher AUC of the BERT-based models shows that they discriminate better between true and false news. Fig. 3 shows the ROC curves of BERT, BiLSTM, and BERT+BiLSTM for all datasets.
+The ROC curve plots the True Positive Rate (sensitivity) against the False Positive Rate over various classification thresholds and shows how well the model separates true from false news. The closer the curve lies to the top left, the better the model. The area under the curve (AUC) summarizes discrimination in one number: values near 1.0 mean a very good classifier and 0.5 means a random one. The BERT-based models have the higher AUC on both datasets (ISOT 0.998 and 0.999 against 0.996 for the BiLSTM, LIAR2 0.769 and 0.763 against 0.721), although on ISOT the gap is small. Fig. 3 shows the ROC curves of BERT, BiLSTM, and BERT+BiLSTM for all datasets.
 
 \begin{figure}[htbp]
 \centering
@@ -394,7 +394,7 @@ The Precision--Recall (PR) curve shows the trade-off between precision and recal
 \label{fig:pr_curve}
 \end{figure}
 
-The loss learning curve shows how well the model learned in each epoch. BERT converges fast with a small gap between training and validation loss, which means it generalizes well. The BiLSTM converges slowly and has a higher loss than BERT, which means it underfits. BERT+BiLSTM learns smoothly but does not perform much better than BERT in the current setup. Fig. 5 shows the loss curves of BERT, BiLSTM, and BERT+BiLSTM for all datasets.
+The loss learning curve shows how well the model learned in each epoch. On ISOT the validation loss of BERT + BiLSTM is lowest at epoch 2 (0.060) and rises slightly at epoch 3 (0.067) while the training loss keeps falling. On LIAR2 the same model has its lowest validation loss after epoch 1 (0.566) and then rises to 0.594, so it starts to overfit after one epoch on the harder dataset. Fig. 5 shows the loss curves of BERT, BiLSTM, and BERT+BiLSTM for both datasets.
 
 \begin{figure}[htbp]
 \centering
@@ -417,9 +417,9 @@ The test used a stratified random sample of 300 articles (150 real, 150 fake) fr
 \begin{tabular}{|l|c|c|c|c|}
 \hline
 \textbf{Model} & \textbf{Accuracy} & \textbf{Precision} & \textbf{Recall} & \textbf{F1 Score} \\ \hline
-BiLSTM (fine-tuned) & 0.5000 & 0.2500 & 0.5000 & 0.3333 \\
-BERT (fine-tuned) & 0.9500 & 0.9545 & 0.9500 & 0.9499 \\
-BERT + BiLSTM (fine-tuned) & 0.9500 & 0.9545 & 0.9500 & 0.9499 \\
+BiLSTM (fine-tuned, ISOT) & 0.9714 & 0.9846 & 0.9523 & 0.9682 \\
+BERT (fine-tuned, ISOT) & 0.9768 & 0.9886 & 0.9603 & 0.9742 \\
+BERT + BiLSTM (fine-tuned, ISOT) & 0.9815 & 0.9914 & 0.9679 & 0.9795 \\
 Local LLM, Qwen2.5-1.5B-Instruct (zero-shot) & 0.7233 & 0.9136 & 0.4933 & 0.6407 \\ \hline
 \end{tabular}
 \end{table}
@@ -484,13 +484,13 @@ BERT & ISOT + LIAR2 & LIAR2 (in-domain) & 0.693 $\pm$ 0.004 & 0.717 $\pm$ 0.009 
 \end{tabular}
 \end{table}
 
-Three findings follow. First, both models separate ISOT almost perfectly in-domain (BERT AUC 0.999) but fall to chance on LIAR2 (accuracy 0.50, AUC 0.47), and a model trained on LIAR2 falls below chance on ISOT. The high in-domain accuracy therefore reflects dataset-specific patterns more than transferable cues of fake news. Second, BERT gains only a little over the GRU on LIAR2 (F1 0.733 against 0.725), so a larger encoder does not fix the problem on its own. Third, training on both datasets keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, so mixing sources costs nothing in-domain, but this has not yet been tested on a third, unseen dataset. The LIAR scores in Table \ref{tab:comparison_extended} come from a different setup from the LIAR2 runs (label mapping, input cleaning, and number of epochs), so they should not be compared directly with the LIAR2 results. Closing the cross-domain gap is the main remaining work: stronger encoders, article-body input, retrieval-augmented classification, and explainability checks.
+Three findings follow. First, both models separate ISOT almost perfectly in-domain (BERT AUC 0.999) but fall to chance on LIAR2 (accuracy 0.50, AUC 0.47), and a model trained on LIAR2 falls below chance on ISOT. The high in-domain accuracy therefore reflects dataset-specific patterns more than transferable cues of fake news. Second, BERT gains only a little over the GRU on LIAR2 (F1 0.733 against 0.725), so a larger encoder does not fix the problem on its own. Third, training on both datasets keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, so mixing sources costs nothing in-domain, but this has not yet been tested on a third, unseen dataset. The LIAR2 rows in Table \ref{tab:comparison_extended} come from a single seed and a 70:15:15 split, so they differ slightly from the three-seed means used in the cross-dataset table (BERT 0.694 accuracy). Closing the cross-domain gap is the main remaining work: stronger encoders, article-body input, retrieval-augmented classification, and explainability checks.
 
 \section{Conclusion and Future Research Directions}
 
 This study examined a transformer-based approach to fake news identification and compared several classical and neural network models. It evaluated the BiLSTM, BERT, and a hybrid of BERT and BiLSTM for detecting fake news.
 
-Across the experiments, the standalone BiLSTM showed low efficiency, with 50\% accuracy and an F1-score of 0.3333. The likely causes are too few training epochs, inadequate hyperparameter tuning, and the complexity of the datasets. BERT clearly outperformed all other models, with 95\% accuracy and an F1-score of 0.9499. The hybrid was meant to combine contextual and sequential learning. It gave no notable gain over BERT, which suggests that the sequential component adds no value in the current experimental setup. BERT alone can therefore be relied on to classify fake news here, without the extra component.
+Across the experiments on ISOT, the BiLSTM, BERT, and BERT + BiLSTM reached 97.1\%, 97.7\%, and 98.2\% accuracy, with F1 scores of 0.968, 0.974, and 0.980. The hybrid was meant to combine contextual and sequential learning, and it gave a small gain on ISOT only. On LIAR2 the three models reached 66.4\%, 68.9\%, and 68.2\% accuracy, and BERT alone was the best. The gaps between models are small and come from one seed, so the main conclusion is that the choice of model matters less than the choice of dataset.
 
 Within each dataset, transformer-based models gave stable results. BERT alone is the best choice for implementation, since it performs at a high level without added complexity.
 
