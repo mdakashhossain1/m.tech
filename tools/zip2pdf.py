@@ -54,17 +54,23 @@ def find_main(folder):
     return max(candidates, key=lambda c: c[0])[1]
 
 
+def fix_common_typos(folder):
+    for tex in folder.rglob("*.tex"):
+        text = tex.read_text(encoding="utf-8", errors="ignore")
+        fixed = re.sub(r"\\colour(?![a-zA-Z])", lambda m: "\\color", text)
+        if fixed != text:
+            tex.write_text(fixed, encoding="utf-8")
+            print(f"Fixed colour typo in {tex.name}")
+
+
 def run(cmd, cwd):
     return subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, errors="ignore")
 
 
 def compile_tex(main, pdflatex, bibtex):
     cwd, stem = main.parent, main.stem
-    args = [pdflatex, "-interaction=nonstopmode", "-halt-on-error", main.name]
-    first = run(args, cwd)
-    if first.returncode != 0:
-        print(first.stdout[-1500:])
-        sys.exit("pdflatex failed on the first pass. See the log above.")
+    args = [pdflatex, "-interaction=nonstopmode", main.name]
+    run(args, cwd)
     aux = (cwd / f"{stem}.aux").read_text(encoding="utf-8", errors="ignore") if (cwd / f"{stem}.aux").exists() else ""
     if "\\bibdata" in aux:
         run([bibtex, stem], cwd)
@@ -72,7 +78,9 @@ def compile_tex(main, pdflatex, bibtex):
         run(args, cwd)
     pdf = cwd / f"{stem}.pdf"
     if not pdf.exists():
-        sys.exit("No PDF was produced.")
+        log = (cwd / f"{stem}.log").read_text(encoding="utf-8", errors="ignore")
+        errors = [line for line in log.splitlines() if line.startswith("!")]
+        sys.exit("No PDF was produced. First errors: " + "; ".join(errors[:3]))
     return pdf
 
 
@@ -83,6 +91,7 @@ def main():
         work = Path(tmp)
         with zipfile.ZipFile(zip_path) as z:
             z.extractall(work)
+        fix_common_typos(work)
         tex = find_main(work)
         print(f"Compiling {tex.name} ...")
         pdf = compile_tex(tex, pdflatex, bibtex)
