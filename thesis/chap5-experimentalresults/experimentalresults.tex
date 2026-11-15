@@ -118,7 +118,7 @@ The confusion matrix in Figure~\ref{fig:confusion} compares predicted versus act
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.33]{Confusion.png}
+\includegraphics[scale=0.33]{./chap5-experimentalresults/Confusion.png}
 \caption{Confusion Matrix for BERT, BiLSTM, and BERT+BiLSTM models across all datasets}
 \label{fig:confusion}
 \end{figure}
@@ -127,7 +127,7 @@ The ROC curve in Figure~\ref{fig:roc} plots the True Positive Rate against the F
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.33]{ROC.png}
+\includegraphics[scale=0.33]{./chap5-experimentalresults/ROC.png}
 \caption{ROC Curves for BERT, BiLSTM, and BERT+BiLSTM models across all datasets}
 \label{fig:roc}
 \end{figure}
@@ -136,7 +136,7 @@ The precision--recall (PR) curve in Figure~\ref{fig:pr} shows the trade-off betw
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.33]{PR_Curve.png}
+\includegraphics[scale=0.33]{./chap5-experimentalresults/PR_Curve.png}
 \caption{Precision--Recall Curves for BERT, BiLSTM, and BERT+BiLSTM models across all datasets}
 \label{fig:pr}
 \end{figure}
@@ -145,7 +145,7 @@ Finally, the training/validation loss curves in Figure~\ref{fig:loss} show how e
 
 \begin{figure}[h]
 \centering
-\includegraphics[scale=0.7]{Loss.jpg}
+\includegraphics[scale=0.7]{./chap5-experimentalresults/Loss.jpg}
 \caption{Loss Curves for BERT, BiLSTM, and BERT+BiLSTM models across all datasets}
 \label{fig:loss}
 \end{figure}
@@ -215,18 +215,18 @@ The in-domain scores above are measured on ISOT, whose headlines carry source ar
 \label{tab:cross-dataset}
 \begin{tabular}{llllll}
 \hline
-Model & Train & Test & Accuracy & F1 & AUC \
+Model & Train & Test & Accuracy & F1 & AUC \\
 \hline
-GRU & ISOT & ISOT (in-domain) & 0.962 $\pm$ 0.001 & 0.958 $\pm$ 0.002 & 0.993 \
-GRU & ISOT & LIAR2 (cross) & 0.532 $\pm$ 0.009 & 0.662 $\pm$ 0.013 & 0.466 \
-GRU & LIAR2 & LIAR2 (in-domain) & 0.680 $\pm$ 0.006 & 0.725 $\pm$ 0.004 & 0.749 \
-GRU & LIAR2 & ISOT (cross) & 0.475 $\pm$ 0.008 & 0.627 $\pm$ 0.004 & 0.681 \
-BERT & ISOT & ISOT (in-domain) & 0.984 $\pm$ 0.002 & 0.982 $\pm$ 0.002 & 0.999 \
-BERT & ISOT & LIAR2 (cross) & 0.504 $\pm$ 0.001 & 0.611 $\pm$ 0.001 & 0.472 \
-BERT & LIAR2 & LIAR2 (in-domain) & 0.694 $\pm$ 0.004 & 0.733 $\pm$ 0.013 & 0.770 \
-BERT & LIAR2 & ISOT (cross) & 0.460 $\pm$ 0.002 & 0.626 $\pm$ 0.001 & 0.562 \
-BERT & ISOT + LIAR2 & ISOT (in-domain) & 0.984 $\pm$ 0.001 & 0.982 $\pm$ 0.001 & 0.998 \
-BERT & ISOT + LIAR2 & LIAR2 (in-domain) & 0.693 $\pm$ 0.004 & 0.717 $\pm$ 0.009 & 0.772 \
+GRU & ISOT & ISOT (in-domain) & 0.962 $\pm$ 0.001 & 0.958 $\pm$ 0.002 & 0.993 \\
+GRU & ISOT & LIAR2 (cross) & 0.532 $\pm$ 0.009 & 0.662 $\pm$ 0.013 & 0.466 \\
+GRU & LIAR2 & LIAR2 (in-domain) & 0.680 $\pm$ 0.006 & 0.725 $\pm$ 0.004 & 0.749 \\
+GRU & LIAR2 & ISOT (cross) & 0.475 $\pm$ 0.008 & 0.627 $\pm$ 0.004 & 0.681 \\
+BERT & ISOT & ISOT (in-domain) & 0.984 $\pm$ 0.002 & 0.982 $\pm$ 0.002 & 0.999 \\
+BERT & ISOT & LIAR2 (cross) & 0.504 $\pm$ 0.001 & 0.611 $\pm$ 0.001 & 0.472 \\
+BERT & LIAR2 & LIAR2 (in-domain) & 0.694 $\pm$ 0.004 & 0.733 $\pm$ 0.013 & 0.770 \\
+BERT & LIAR2 & ISOT (cross) & 0.460 $\pm$ 0.002 & 0.626 $\pm$ 0.001 & 0.562 \\
+BERT & ISOT + LIAR2 & ISOT (in-domain) & 0.984 $\pm$ 0.001 & 0.982 $\pm$ 0.001 & 0.998 \\
+BERT & ISOT + LIAR2 & LIAR2 (in-domain) & 0.693 $\pm$ 0.004 & 0.717 $\pm$ 0.009 & 0.772 \\
 \hline
 \end{tabular}
 \end{table}

@@ -9,6 +9,8 @@ The experimental results are unambiguous: the standalone BiLSTM model demonstrat
 
 More broadly, this work demonstrates that transformer-based models produce stable, reliable results for fake news detection across multiple benchmark datasets, and that such models are well suited to practical deployment in scenarios such as social media monitoring and automated fact-checking, given their strong and consistent generalization performance.
 
+A cross-dataset test with cleaned and deduplicated headlines shows the limit of these in-domain scores. BERT reaches 0.984 accuracy on ISOT but only 0.504 on LIAR2 when trained on ISOT, and the GRU behaves the same way (0.532), so the models learn dataset-specific patterns more than transferable cues. Training on ISOT and LIAR2 together keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, but this has not yet been tested on a third dataset. Closing this gap with stronger encoders, article-body input, retrieval-augmented classification and explainability analysis is the main work that remains.
+
 \section{Future Research Direction}
 
 Although Large Language Models (LLMs) and Explainable AI (XAI) techniques were not part of the system design evaluated in this thesis, they represent clear and promising directions for future work.

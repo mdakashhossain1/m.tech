@@ -466,18 +466,18 @@ The in-domain scores above are measured on ISOT, whose headlines carry source ar
 \label{tab:cross-dataset}
 \begin{tabular}{llllll}
 \hline
-Model & Train & Test & Accuracy & F1 & AUC \
+Model & Train & Test & Accuracy & F1 & AUC \\
 \hline
-GRU & ISOT & ISOT (in-domain) & 0.962 $\pm$ 0.001 & 0.958 $\pm$ 0.002 & 0.993 \
-GRU & ISOT & LIAR2 (cross) & 0.532 $\pm$ 0.009 & 0.662 $\pm$ 0.013 & 0.466 \
-GRU & LIAR2 & LIAR2 (in-domain) & 0.680 $\pm$ 0.006 & 0.725 $\pm$ 0.004 & 0.749 \
-GRU & LIAR2 & ISOT (cross) & 0.475 $\pm$ 0.008 & 0.627 $\pm$ 0.004 & 0.681 \
-BERT & ISOT & ISOT (in-domain) & 0.984 $\pm$ 0.002 & 0.982 $\pm$ 0.002 & 0.999 \
-BERT & ISOT & LIAR2 (cross) & 0.504 $\pm$ 0.001 & 0.611 $\pm$ 0.001 & 0.472 \
-BERT & LIAR2 & LIAR2 (in-domain) & 0.694 $\pm$ 0.004 & 0.733 $\pm$ 0.013 & 0.770 \
-BERT & LIAR2 & ISOT (cross) & 0.460 $\pm$ 0.002 & 0.626 $\pm$ 0.001 & 0.562 \
-BERT & ISOT + LIAR2 & ISOT (in-domain) & 0.984 $\pm$ 0.001 & 0.982 $\pm$ 0.001 & 0.998 \
-BERT & ISOT + LIAR2 & LIAR2 (in-domain) & 0.693 $\pm$ 0.004 & 0.717 $\pm$ 0.009 & 0.772 \
+GRU & ISOT & ISOT (in-domain) & 0.962 $\pm$ 0.001 & 0.958 $\pm$ 0.002 & 0.993 \\
+GRU & ISOT & LIAR2 (cross) & 0.532 $\pm$ 0.009 & 0.662 $\pm$ 0.013 & 0.466 \\
+GRU & LIAR2 & LIAR2 (in-domain) & 0.680 $\pm$ 0.006 & 0.725 $\pm$ 0.004 & 0.749 \\
+GRU & LIAR2 & ISOT (cross) & 0.475 $\pm$ 0.008 & 0.627 $\pm$ 0.004 & 0.681 \\
+BERT & ISOT & ISOT (in-domain) & 0.984 $\pm$ 0.002 & 0.982 $\pm$ 0.002 & 0.999 \\
+BERT & ISOT & LIAR2 (cross) & 0.504 $\pm$ 0.001 & 0.611 $\pm$ 0.001 & 0.472 \\
+BERT & LIAR2 & LIAR2 (in-domain) & 0.694 $\pm$ 0.004 & 0.733 $\pm$ 0.013 & 0.770 \\
+BERT & LIAR2 & ISOT (cross) & 0.460 $\pm$ 0.002 & 0.626 $\pm$ 0.001 & 0.562 \\
+BERT & ISOT + LIAR2 & ISOT (in-domain) & 0.984 $\pm$ 0.001 & 0.982 $\pm$ 0.001 & 0.998 \\
+BERT & ISOT + LIAR2 & LIAR2 (in-domain) & 0.693 $\pm$ 0.004 & 0.717 $\pm$ 0.009 & 0.772 \\
 \hline
 \end{tabular}
 \end{table}
@@ -496,6 +496,8 @@ In general, transformer-based models have been shown to produce stable results i
 A further comparison of a standalone GRU with four GRU-based hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet) on headline-only input produced accuracies of 95.1--95.5\% and F1 scores of 0.9528--0.9560 (Table \ref{tab:gru-comparison}). The hybrids therefore offer no meaningful advantage over the standalone GRU, and all of them match the fine-tuned BERT models with far smaller models.
 
 Although LLMs and XAI techniques are not part of the main system design, a preliminary zero-shot experiment with a local LLM was conducted (Section 3.1, Table \ref{tab:llm-comparison}), which achieved 72.33\% accuracy without any task-specific training but with markedly lower recall than the fine-tuned transformer models, motivating the RAG- and evidence-grounding directions discussed below rather than replacing the current fine-tuned pipeline. Future developments on this system will involve using LLM-based reasoning to aid decision-making, incorporating explainability, expanding to support multi-language and multimodal data, as well as deploying it in a federated environment.
+
+A cross-dataset test with cleaned and deduplicated headlines shows the limit of these in-domain scores. BERT reaches 0.984 accuracy on ISOT but only 0.504 on LIAR2 when trained on ISOT, and the GRU behaves the same way (0.532), so the models learn dataset-specific patterns more than transferable cues. Training on ISOT and LIAR2 together keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, but this has not yet been tested on a third dataset. Closing this gap with stronger encoders, article-body input, retrieval-augmented classification and explainability analysis is the main work that remains.
 
 \subsection{Future Scope}
 
