@@ -4,8 +4,8 @@ Trains on one dataset and evaluates on its own held-out split and on the other
 dataset, over several seeds. ISOT is cleaned of source artifacts first.
 
 Data (not committed, place yourself):
-  experiments/data/Fake.csv, True.csv        ISOT / Kaggle "fake-and-real-news-dataset"
-  experiments/data/liar/{train,valid,test}.tsv   LIAR (Wang 2017), tab-separated
+  experiments/data/isot_hf.parquet   ISOT (HF mirror ErfanMoosaviMonazzah/fake-news-detection-dataset-English, label 0 = fake)
+  experiments/data/liar2.parquet     LIAR2 (HF chengxuphd/liar2); labels 0-2 treated as fake, 3-5 as real
 
 Run from the repository root:
   python experiments/cross_dataset/run_cross_dataset.py --seeds 5
@@ -30,7 +30,7 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 DATA = Path("experiments/data")
 OUT = Path("experiments/results/cross_dataset")
 VOCAB, MAXLEN = 10000, 40
-LIAR_FAKE = {"pants-fire", "false", "barely-true"}
+LIAR_FAKE = {0, 1, 2}
 DATELINE = re.compile(r"^[A-Z][A-Za-z .,/'-]{1,40}\s*\((reuters)\)\s*[-–—]?\s*", re.I)
 
 
@@ -42,19 +42,13 @@ def clean(text):
 
 
 def load_isot():
-    fake = pd.read_csv(DATA / "Fake.csv").assign(label=1)
-    real = pd.read_csv(DATA / "True.csv").assign(label=0)
-    df = pd.concat([fake, real], ignore_index=True).dropna(subset=["title"])
-    df = df.drop_duplicates(subset="title")
-    return pd.DataFrame({"text": df["title"], "label": df["label"]})
+    df = pd.read_parquet(DATA / "isot_hf.parquet").dropna(subset=["title"]).drop_duplicates(subset="title")
+    return pd.DataFrame({"text": df["title"], "label": (df["label"] == 0).astype(int)})
 
 
 def load_liar():
-    cols = ["id", "label_raw", "statement"]
-    parts = [pd.read_csv(DATA / "liar" / f"{s}.tsv", sep="\t", header=None, usecols=[0, 1, 2], names=cols)
-             for s in ("train", "valid", "test")]
-    df = pd.concat(parts, ignore_index=True)
-    return pd.DataFrame({"text": df["statement"], "label": df["label_raw"].isin(LIAR_FAKE).astype(int)})
+    df = pd.read_parquet(DATA / "liar2.parquet")
+    return pd.DataFrame({"text": df["statement"], "label": df["label"].isin(LIAR_FAKE).astype(int)})
 
 
 def prepare(df):

@@ -1,0 +1,62 @@
+{
+  "('accuracy', 'mean')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.9621,
+    "('ISOT', 'LIAR (cross-domain)')": 0.5315,
+    "('LIAR', 'ISOT (cross-domain)')": 0.4753,
+    "('LIAR', 'LIAR (in-domain)')": 0.6795
+  },
+  "('accuracy', 'std')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.0014,
+    "('ISOT', 'LIAR (cross-domain)')": 0.009,
+    "('LIAR', 'ISOT (cross-domain)')": 0.0084,
+    "('LIAR', 'LIAR (in-domain)')": 0.0059
+  },
+  "('precision', 'mean')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.9657,
+    "('ISOT', 'LIAR (cross-domain)')": 0.5664,
+    "('LIAR', 'ISOT (cross-domain)')": 0.4639,
+    "('LIAR', 'LIAR (in-domain)')": 0.7182
+  },
+  "('precision', 'std')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.0095,
+    "('ISOT', 'LIAR (cross-domain)')": 0.0036,
+    "('LIAR', 'ISOT (cross-domain)')": 0.0042,
+    "('LIAR', 'LIAR (in-domain)')": 0.0171
+  },
+  "('recall', 'mean')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.9509,
+    "('ISOT', 'LIAR (cross-domain)')": 0.798,
+    "('LIAR', 'ISOT (cross-domain)')": 0.9683,
+    "('LIAR', 'LIAR (in-domain)')": 0.7326
+  },
+  "('recall', 'std')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.0096,
+    "('ISOT', 'LIAR (cross-domain)')": 0.0304,
+    "('LIAR', 'ISOT (cross-domain)')": 0.0032,
+    "('LIAR', 'LIAR (in-domain)')": 0.0254
+  },
+  "('f1', 'mean')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.9582,
+    "('ISOT', 'LIAR (cross-domain)')": 0.6624,
+    "('LIAR', 'ISOT (cross-domain)')": 0.6273,
+    "('LIAR', 'LIAR (in-domain)')": 0.7249
+  },
+  "('f1', 'std')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.0016,
+    "('ISOT', 'LIAR (cross-domain)')": 0.0129,
+    "('LIAR', 'ISOT (cross-domain)')": 0.0043,
+    "('LIAR', 'LIAR (in-domain)')": 0.0042
+  },
+  "('auc', 'mean')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.993,
+    "('ISOT', 'LIAR (cross-domain)')": 0.4657,
+    "('LIAR', 'ISOT (cross-domain)')": 0.6809,
+    "('LIAR', 'LIAR (in-domain)')": 0.7487
+  },
+  "('auc', 'std')": {
+    "('ISOT', 'ISOT (in-domain)')": 0.0002,
+    "('ISOT', 'LIAR (cross-domain)')": 0.0118,
+    "('LIAR', 'ISOT (cross-domain)')": 0.0286,
+    "('LIAR', 'LIAR (in-domain)')": 0.0055
+  }
+}
