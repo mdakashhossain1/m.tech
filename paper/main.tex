@@ -26,13 +26,13 @@
 \maketitle              % typeset the header of the contribution
 
 \begin{abstract}
-The objective of fake news detection is to employ computing tools such as NLP and ML to identify and categorize fake or misleading information. The proliferation of misinformation through digital media channels poses threats to public perception, democratic governance, and information reliability, requiring automatic fake news detection systems that can handle large amounts of data.
+Fake news detection uses computing tools such as NLP and ML to identify and categorize fake or misleading information. Misinformation spreads through digital media and threatens public perception, democratic governance, and the reliability of information. This calls for automatic detection systems that can handle large volumes of data.
 
-In this paper, a layered model for fake news detection has been proposed that employs NLP for text preprocessing, feature extraction, and comparative analysis of multiple models. In the process of text preprocessing, noise reduction, tokenization, stopword elimination, and lemmatization are some of the processes applied to standardize textual information.
+This paper proposes a layered model for fake news detection. It uses NLP for text preprocessing (noise reduction, tokenization, stopword elimination, and lemmatization), then feature extraction, and a comparison of several models.
 
-This paper analyzes three fundamental models such as BiLSTM, BERT, and BERT + BiLSTM models on various benchmark datasets, such as LIAR and ISOT for assessing generalization ability. From the experimental analysis, it can be seen that the standalone model of BiLSTM demonstrates relatively poor performance since it gives only 50\% accuracy rate, where its F1 score is equal to 0.3333. This can be explained by the fact that the model has been trained only for a few epochs without performing extensive hyperparameter tuning. On the other hand, the BERT model demonstrates a much better performance than any sequential models because it gives up to 95\% accuracy, where the precision equals 0.9545, while recall equals 0.9500.
-A further set of experiments on headline-only input evaluates a standalone GRU and four GRU-based hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet); all five reach 95.1--95.5\% accuracy and F1 scores between 0.9528 and 0.9560, with GRU+BiLSTM performing best.
-The above results illustrate the efficiency of using transformer-based models in detecting fake news. The proposed system can be easily scalable and used for practical implementation in real-life scenarios like social media monitoring and fact-checking. Further research aims to incorporate large language models and explainable AI into the system.
+Three models, a BiLSTM, BERT, and a hybrid BERT + BiLSTM, are evaluated on the LIAR and ISOT benchmark datasets. The standalone BiLSTM performs poorly, with 50\% accuracy and an F1 score of 0.3333, probably because it was trained for only a few epochs without extensive hyperparameter tuning. BERT performs far better than the sequential model, with 95\% accuracy, a precision of 0.9545, and a recall of 0.9500. A further set of experiments on headline-only input evaluates a standalone GRU and four GRU-based hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet). All five reach 95.1--95.5\% accuracy and F1 scores between 0.9528 and 0.9560, and GRU+BiLSTM is the best of them.
+
+A cross-dataset test on cleaned, deduplicated headlines qualifies these scores. Trained on ISOT, BERT reaches 0.984 accuracy on ISOT but only 0.504 on LIAR2, and the GRU behaves the same way. Transformer-based models are therefore the strongest within a dataset, but the models learn dataset-specific patterns, and detection across sources remains an open problem. The proposed system can be scaled for use in social media monitoring and fact-checking. Future work will add large language models and explainable AI.
 
 \keywords{Fake news detection, Natural Language Processing, Machine Learning, Explainable AI, Misinformation.}
 \end{abstract}
@@ -40,69 +40,69 @@ The above results illustrate the efficiency of using transformer-based models in
 \section{Introduction}
 \subsection{Background and Motivation}
 
-The detection of fake news is basically an automated process that involves detecting and categorizing false, misleading, or fabricated information portrayed as true news by using advanced computational methods such as NLP and ML \cite{Shu2020FakeNewsNet,Shu2017FakeNewsDetection}. Due to the emergence of digital media platforms, there has been an increase in the amount of information being generated and transmitted online at an unprecedented rate.
+Fake news detection is the automated task of identifying and categorizing false, misleading, or fabricated information that is presented as true news. It uses computational methods such as NLP and ML \cite{Shu2020FakeNewsNet,Shu2017FakeNewsDetection}. Digital media platforms have raised the amount of information generated and shared online to an unprecedented level.
 
-Such an issue presents various challenges, including the manipulation of public perception, interference with democratic procedures, and erosion of confidence in reliable information sources \cite{Shu2020FakeNewsNet,Shu2017FakeNewsDetection}. Researches have demonstrated that lies and untruths spread quickly among social media sites as compared to the actual news \cite{Vosoughi2018Spread}. It is hard for reporters and fact-checkers to keep up with such a quick pace of spread and verify the news manually.
+This creates several problems: manipulation of public perception, interference with democratic processes, and loss of confidence in reliable sources \cite{Shu2020FakeNewsNet,Shu2017FakeNewsDetection}. Studies show that false information spreads faster on social media than real news \cite{Vosoughi2018Spread}. Reporters and fact-checkers cannot keep up with this pace and verify every item by hand.
 
-Furthermore, the spread of disinformation can have disastrous effects on the society and economy. Therefore, the development of such systems that are capable of detecting fake news automatically is an important research challenge.
+The spread of disinformation can also have serious social and economic effects. Systems that detect fake news automatically are therefore an important research challenge.
 
 \subsection{Types of Fake News}
 
-The term fake news encompasses an amalgamation of news items belonging to distinct classes with varying motives and features. For instance, the five main types of fake news include:
+``Fake news'' covers several classes of news items, each with different motives and features. The five main types are:
 
 \begin{itemize}
-\item \textbf{False News Stories:} Fabricated information deliberately designed to deceive readers.
-\item \textbf{Manipulated News:} Real information that has been manipulated or distorted in some way.
-\item \textbf{Satirical News:} Ridiculous or hyperbolic news that may be taken seriously.
+\item \textbf{False News Stories:} Fabricated information designed to deceive readers.
+\item \textbf{Manipulated News:} Real information that has been altered or distorted.
+\item \textbf{Satirical News:} Absurd or exaggerated news that may be taken seriously.
 \item \textbf{Clickbait:} News stories with misleading titles.
-\item \textbf{Propaganda:} Biased or misleading information aimed at shaping perceptions or advancing certain causes.
+\item \textbf{Propaganda:} Biased or misleading information meant to shape perceptions or advance certain causes.
 \end{itemize}
 
-The diversity present in these categories leads to many difficulties that arise in the automatic detection process because of the unique characteristics possessed by these classes. Thus, there is a necessity to devise powerful models that can efficiently handle the meaning and contextual relationship within textual information.
+Because each class has its own characteristics, automatic detection is difficult. Detection needs models that can handle the meaning of the text and the contextual relationships within it.
 
 \subsection{Role of Machine Learning and Deep Learning Methods}
 
-Machine learning and deep learning techniques have been able to prove themselves effective when used to detect fake news because of the ability of these models to extract complicated patterns from large sets of data. There are classical machine learning algorithms like Logistic Regression, Support Vector Machine (SVM), Naive Bayes, and Random Forest.
-Deep learning models such as LSTM and BiLSTM are built for identifying sequences within the text. Yet, their effectiveness may be undermined when complex associations between contexts are involved, especially with a limited amount of training data or inadequate training time.
+Machine learning and deep learning work well for fake news detection because they can extract complex patterns from large datasets. Classical machine learning algorithms include Logistic Regression, Support Vector Machine (SVM), Naive Bayes, and Random Forest. Deep learning models such as LSTM and BiLSTM are built to identify sequences in text. Their effectiveness can still suffer when contextual associations are complex, especially with limited training data or too little training time.
 
-Transformers like BERT (Bidirectional Encoder Representations from Transformers) have outperformed existing sequential models by generating bidirectional contextualized representation of text \cite{Kaliyar2021FakeBERT,Mehta2022RecentTrends}. While sequential models rely on a sequential approach to process texts, BERT considers the whole input context at once, thereby gaining insight into semantic relations.
+Transformers such as BERT (Bidirectional Encoder Representations from Transformers) outperform earlier sequential models by producing bidirectional contextualized representations of text \cite{Kaliyar2021FakeBERT,Mehta2022RecentTrends}. Sequential models process text step by step, while BERT considers the whole input at once and so captures semantic relations more fully.
 
-The textual inputs are encoded numerically using methods like TF-IDF, bag-of-words, Word2Vec, GloVe, and BERT embedding. Such encoding allows models to learn discriminatory features for classification.
+Text inputs are encoded numerically with methods such as TF-IDF, bag-of-words, Word2Vec, GloVe, and BERT embeddings. These encodings let models learn discriminative features for classification.
 
 \subsection{Overview of the Proposed System}
 
-The suggested fake news detection model is intended to work as a multi-stage processing pipeline where news input data will be received up until the process ends in detecting fake news and making a report of the results. The proposed model can handle various input types, like textual information, news headlines, and URLs to web pages containing news articles.
+The proposed fake news detection model is a multi-stage pipeline. It takes news input and ends with a detection result and a report. It accepts several input types: text, news headlines, and URLs of web pages that contain news articles.
 
-Training and testing the model are performed using well-known benchmark datasets like LIAR, ISOT, and FakeNewsNet. Benchmark datasets contain examples of both real and fake news data. The ability of the models to generalize and perform across multiple datasets is evaluated through testing and comparing their results on various datasets.
+The model is trained and tested on well-known benchmark datasets: LIAR, ISOT, and FakeNewsNet. They contain both real and fake news. Comparing results across datasets shows how well the models generalize.
 
-The model contains an NLP preprocessing step that involves cleaning and normalizing the news text data by performing tokenization, stop-word elimination, stemming, lemmatization, and lowercase transformations.
+An NLP preprocessing step cleans and normalizes the news text through tokenization, stop-word elimination, stemming, lemmatization, and lowercasing.
 
-Text representation is performed in the feature extraction layer through techniques such as TF-IDF, Bag-of-Words, Word2Vec, GloVe, and BERT’s contextual embedding. Such transformations enable statistical as well as semantic properties of text to be captured effectively.
+The feature extraction layer represents the text with TF-IDF, Bag-of-Words, Word2Vec, GloVe, and BERT's contextual embeddings. These representations capture both statistical and semantic properties of the text.
 
-In terms of the classification layer, a variety of models were analyzed, namely, BiLSTM, BERT, and an ensemble of BERT + BiLSTM. Experiments indicate that the model based on BiLSTM obtains poor results compared to the others, and this might be due to a small number of training epochs, insufficient fine-tuning of the model, and a complicated nature of the used dataset. However, the BERT model provides superior performance since it makes use of pre-trained contextual embeddings. Interestingly, there is no significant difference between the results obtained from BERT and BERT + BiLSTM.
+The classification layer was analyzed with several models: BiLSTM, BERT, and a combination of BERT + BiLSTM. The BiLSTM obtains poor results compared with the others, possibly because of the small number of training epochs, insufficient fine-tuning, and the complexity of the dataset. BERT performs best because it uses pre-trained contextual embeddings. BERT and BERT + BiLSTM show no significant difference.
 
-Finally, the output layer is responsible for labeling the input data as either \textit{real} or \textit{fake} news and producing corresponding confidence estimates. A reporting mechanism was introduced to generate comprehensible output.
+Finally, the output layer labels the input as \textit{real} or \textit{fake} and gives a confidence estimate. A reporting mechanism produces an output that is easy to read.
 
 \subsection{Contribution}
 
-This study makes the following key contributions:
+This study makes the following contributions:
 
 \begin{itemize}
-\item Suggests an architecture for detecting fake news using a multi-level approach that combines natural language processing preprocessing, feature extraction, and classification techniques.
-\item Compares different models including BiLSTM, BERT, and BERT with BiLSTM through various experiments on several datasets.
-\item Shows the superiority of transformer models in the fake news detection task.
-\item Benchmarks a standalone GRU against four GRU-based hybrid architectures (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet) under an identical data split and training protocol.
-\item Investigates the drawbacks of sequential models and their hybrid models under restricted training conditions.
-\item Indicates the promising areas for future research that focus on LLMs and XAI approaches.
+\item It proposes a multi-level architecture for fake news detection that combines NLP preprocessing, feature extraction, and classification.
+\item It compares BiLSTM, BERT, and BERT + BiLSTM through experiments on several datasets.
+\item It shows that transformer models are superior for fake news detection.
+\item It benchmarks a standalone GRU against four GRU-based hybrid architectures (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet) under the same data split and training protocol.
+\item It examines the drawbacks of sequential models and their hybrids under restricted training conditions.
+\item It reports a cross-dataset evaluation showing that models scoring above 95\% on ISOT fall to about chance level on LIAR2.
+\item It points to future research directions based on LLMs and XAI.
 \end{itemize}
 
 
 \subsection{Paper Organization}
-The rest of the paper is structured as follows. Section 2 provides an extensive literature review of related work on techniques used for detecting fake news using traditional machine learning techniques, deep learning algorithms, and transformers. Section 3 explains the proposed system design. Section 4 explains the methodology, experiment, dataset, and results. Section 5 concludes the paper and discusses future scope of work.
+The rest of the paper is organized as follows. Section 2 reviews related work on fake news detection with traditional machine learning, deep learning, and transformers. Section 3 explains the proposed system design. Section 4 covers the experiments, datasets, and results. Section 5 concludes the paper and describes future work.
 
 \section{Related Work}
 
-In this section, we review nineteen peer-reviewed articles that form the basis of our research. The selected articles have been organized thematically, starting from traditional ML techniques, then moving on to deep learning and transformers. Finally, we discuss the role of explainability and LLMs. We have summarized all the articles in Table \ref{tab:litreview}.
+This section reviews nineteen peer-reviewed articles that form the basis of our research. They are grouped by theme, from traditional ML techniques to deep learning and transformers, and finally explainability and LLMs. Table \ref{tab:litreview} summarizes all of them.
 
 \begin{longtable}{|p{0.19\textwidth}|p{0.19\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|p{0.18\textwidth}|}
 \caption{Comparative Literature Review of Fake News Detection Methods} \label{tab:litreview} \\
@@ -216,13 +216,13 @@ Apply SHAP to quantify word-level contributions in BERT fake news classifiers; c
 
 \subsection{Motivation for using the Combined BERT + BiLSTM Model}
 
-It is worth noting that the reason why BERT and BiLSTM models should be used together is not because of how poorly BiLSTM performs alone. In reality, the two have their own strengths and capabilities which make them complimentary to each other. BERT is an excellent model when it comes to analyzing context and semantics within text. It uses its bidirectional transformer design in order to capture such relationships in texts, yet its primary means is through attention mechanisms, rather than modeling sequences like RNNs do.
+The reason for using BERT and BiLSTM together is not that BiLSTM performs poorly alone. The two models have complementary strengths. BERT is excellent at analyzing context and semantics. Its bidirectional transformer design captures such relationships, but it does so through attention and not through sequence modelling as RNNs do.
 
-BiLSTM model, in turn, is focused on modeling sequences and captures temporal dependencies in texts. Therefore, it processes its inputs from left to right and vice versa.
+The BiLSTM is built to model sequences and captures temporal dependencies in text. It processes its input from left to right and from right to left.
 
-In the suggested hybrid framework, BERT acts as a contextual feature extractor that extracts informative token embeddings. Rather than depending only on the token [CLS], the entire sequence of contextual embeddings generated from BERT is fed into the BiLSTM layer. Thus, the network becomes capable of enhancing these contextual embeddings by adding the dependency aspect using the BiLSTM.
+In the proposed hybrid framework, BERT acts as a contextual feature extractor that produces informative token embeddings. The entire sequence of contextual embeddings from BERT, and not only the [CLS] token, is fed into the BiLSTM layer. The network can thus refine these contextual embeddings by adding the dependency aspect through the BiLSTM.
 
-Consequently, the resulting BERT + BiLSTM framework will benefit from using the capabilities of both models, i.e., contextual embeddings (BERT) and sequential learning (BiLSTM).
+The resulting BERT + BiLSTM framework is designed to benefit from both contextual embeddings (BERT) and sequential learning (BiLSTM).
 
 \section{Proposed System Architecture}
 
@@ -233,11 +233,11 @@ Consequently, the resulting BERT + BiLSTM framework will benefit from using the 
     \label{fig:architecture}
 \end{figure}
 
-The suggested detection algorithm is an intelligent pipeline model that will help convert unstructured input from news into a classified output. In the first stage, there would be a user input layer where text, headline or links would be entered. Then comes a data collection layer that will collect the required data from benchmark datasets as well as web sources whenever possible. This collected data can then be stored in repositories for future training and testing purposes.
+The proposed detection system is a pipeline that converts unstructured news input into a classified output. The first stage is a user input layer that accepts text, a headline, or a link. A data collection layer then gathers the required data from benchmark datasets and, where possible, web sources. The collected data are stored in repositories for later training and testing.
 
-In the next stage, the NLP pre-processing module would convert the unstructured textual data into a normalized format by tokenizing the text, removing stopwords and lemmatizing it. In the feature extraction layer, text data will be converted into numeric data using techniques like TF-IDF and contextual embeddings like BERT. Finally, in the classification layer, different classification algorithms would be tested and evaluated where the BERT algorithm proves better.
+Next, the NLP pre-processing module converts the unstructured text into a normalized form by tokenizing, removing stopwords, and lemmatizing. The feature extraction layer converts the text into numeric data with techniques such as TF-IDF and contextual embeddings such as BERT. In the classification layer, several classification algorithms are tested and evaluated, and BERT performs best.
 
-Fake News Detection using BERT + BiLSTM model is shown in Algorithm 1.
+Algorithm 1 shows fake news detection with the BERT + BiLSTM model.
 
 \begin{algorithm}[H]
 \caption{Fake News Detection using BERT + BiLSTM}
@@ -254,32 +254,32 @@ Fake News Detection using BERT + BiLSTM model is shown in Algorithm 1.
 
 \section{Experimental Results and Discussion}
 
-In this research work, the designed fake news detection framework is analyzed based on four well-established evaluation metrics commonly used in NLP and IR studies. The aforementioned metrics have the following definitions:
+The proposed framework is evaluated with four standard metrics from NLP and IR studies. They are defined as follows:
 
-Accuracy refers to the percentage of instances that are accurately classified among all instances and is formulated as:
+Accuracy is the share of all instances that are classified correctly:
 \[
 \text{Accuracy} = \frac{TP + TN}{TP + TN + FP + FN}
 \]
 
-Precision refers to the percentage of instances that are accurately classified as fake news among all instances identified as fake news and is expressed as:
+Precision is the share of instances identified as fake news that really are fake:
 
 \[
 \text{Precision} = \frac{TP}{TP + FP}
 \]
 
-Recall is the percentage of real fake news articles that have been accurately classified by the algorithm and is calculated using the following formula:
+Recall is the share of actual fake news articles that the algorithm identifies:
 \[
 \text{Recall} = \frac{TP}{TP + FN}
 \]
 
-The F1-Score is the harmonic mean of precision and recall which provides an evaluation metric that gives a balanced view and is particularly helpful when there is class imbalance and is calculated using the following formula:
+The F1-Score is the harmonic mean of precision and recall. It gives a balanced view and is particularly helpful under class imbalance:
 \[
 \text{F1-Score} = 2 \times \frac{\text{Precision} \times \text{Recall}}{\text{Precision} + \text{Recall}}
 \]
 
-TP = True Positive; TN = True Negative; FP = False Positive; FN = False Negative
-Moreover, the confusion matrix method is also utilized to evaluate the classification results.
-Model Hyperparameters can be found in Table \ref{tab:hyperparameters}.Models have been trained using appropriate hyperparameters for comparison purposes. BERT-based models require lower learning rates and small batches since they are already pre-trained whereas the BiLSTM model has high learning rates. Combined Model combines BERT embeddings with the BiLSTM layer.
+Here TP = True Positive, TN = True Negative, FP = False Positive, and FN = False Negative. The confusion matrix is also used to evaluate the classification results.
+
+Table \ref{tab:hyperparameters} lists the hyperparameters of each model. Each model was trained with hyperparameters suited to its architecture so that the comparison is fair. The BERT-based models are already pre-trained, so they use lower learning rates and small batches, while the BiLSTM uses a high learning rate. The combined model joins BERT embeddings with a BiLSTM layer.
 
 \begin{table}[H]
 \centering
@@ -302,7 +302,7 @@ Loss Function & Binary Crossentropy & Crossentropy & Crossentropy \\ \hline
 \end{tabular}
 \end{table}
 
-All experimental evaluations are performed on three different benchmark datasets mentioned in Table \ref{tab:datasets}.Experimental evaluations are performed using three different benchmark datasets, which include LIAR \cite{Wang2017Liar}, ISOT \cite{ISOTDataset}, and FakeNewsNet \cite{Shu2020FakeNewsNet}. Moreover, a version of the same benchmark dataset hosted by Kaggle has been employed.
+The experiments use three benchmark datasets (Table \ref{tab:datasets}): LIAR \cite{Wang2017Liar}, ISOT \cite{ISOTDataset}, and FakeNewsNet \cite{Shu2020FakeNewsNet}. A Kaggle-hosted version of these datasets was used.
 
 \begin{table}[h]
 \centering
@@ -317,10 +317,10 @@ FakeNewsNet & 23,196 & 11,941 & 11,255 & PolitiFact \& GossipCop \\ \hline
 \end{tabular}
 \end{table}
 
-The data set was split in an 80:10:10 ratio where 80\%, 10\%, and 10\% represent the training, validation, and testing sets, respectively, in accordance with established conventions in the literature \cite{Kaliyar2021FakeBERT,Rai2022FakeNews}.
+Each dataset was split 80:10:10 into training, validation, and test sets, following common practice in the literature \cite{Kaliyar2021FakeBERT,Rai2022FakeNews}.
 
 
-The results of training and evaluating the three models on the fake news data set are given in Table \ref{tab:comparison}. The three models were trained for 3 epochs under similar conditions for a fair comparison.
+Table \ref{tab:comparison} gives the results for the three models on the fake news dataset. For a fair comparison, all three were trained for 3 epochs under similar conditions.
 
 \begin{table}[h]
 \centering
@@ -336,7 +336,7 @@ The results of training and evaluating the three models on the fake news data se
 \end{tabular}
 \end{table}
 
- Table \ref{tab:comparison_extended} presents the comparative performance across multiple benchmark datasets (LIAR and ISOT), demonstrating consistent trends in model behavior.
+Table \ref{tab:comparison_extended} compares the models on two benchmark datasets (LIAR and ISOT) and shows the same trends on each.
 
 \begin{table}[h]
 \centering
@@ -355,17 +355,19 @@ ISOT & BERT+BiLSTM & 0.96 & 0.95 & 0.96 & 0.95 \\ \hline
 \end{tabular}
 \end{table}
 
-Based on the experimental outcomes, it can be seen that the standalone BiLSTM architecture showed poor performance when trained on the data set. The low values for precision, recall, and F1-score, which are 0.2500, 0.5000, and 0.3333, respectively, imply that it could not distinguish between fake news and true news accurately. Moreover, the large value of loss (0.6571) shows that the model could not converge to its optimal value due to the limited number of training epochs used. This poor performance may result from insufficient training epochs, hyperparameter optimization, and the complexity of fake news data sets.
+The standalone BiLSTM performed poorly on the dataset. Its precision, recall, and F1-score of 0.2500, 0.5000, and 0.3333 show that it could not tell fake news from true news accurately. Its large loss (0.6571) shows that it did not converge within the small number of training epochs. The likely causes are too few training epochs, no hyperparameter optimization, and the complexity of fake news datasets.
 
-On the other hand, the BERT model provided better outcomes, with accuracy, precision, recall, and F1-score being 95\%, 0.9545, 0.9500, and 0.9499, respectively. The much lower value of training loss, 0.0686, implies that the BERT model converged well and had good discriminatory power. This is due to the BERT model's ability to detect deep and bidirectional contextual relations within text through language pre-training.
-In addition to the high performance, the combination of the BERT model and BiLSTM model also performed equivalently with 95\% accuracy, 0.9545 precision, 0.9500 recall, and an F1-score of 0.9499. Even though the training loss is a bit higher (0.0998) compared to that of the BERT model alone, the evaluation scores have remained unchanged. This demonstrates that the use of BiLSTM has not enhanced the performance of the model significantly but also has not negatively affected its performance.
+BERT gave better results, with accuracy, precision, recall, and F1-score of 95\%, 0.9545, 0.9500, and 0.9499. Its much lower training loss (0.0686) shows that it converged well and discriminated strongly, because language pre-training lets BERT detect deep bidirectional contextual relations in text.
 
-Furthermore, the ability of the proposed technique to generalize across various test datasets was assessed using different datasets such as LIAR and ISOT. Again, the same high scores were observed in all cases, indicating the consistency and reliability of transformer models for detecting fake news.
-Despite the lack of superiority of the combined model compared to the individual BERT model in the current setting, the results show that hybrid models are efficient and robust. The BiLSTM module is built on top of the contextual embeddings from BERT to detect sequences in the data. This might be more useful when working with large data sets, increasing the number of epochs, and optimizing hyperparameters. Hence, the combination of the two models can yield better performance when optimized accordingly.
+The combination of BERT and BiLSTM performed equally well, with 95\% accuracy, 0.9545 precision, 0.9500 recall, and an F1-score of 0.9499. Its training loss is slightly higher (0.0998) than that of BERT alone, but the evaluation scores are unchanged. The BiLSTM therefore did not improve performance significantly, and it did not harm it either.
 
-The visualization plots are created based on artificial predictions according to the provided evaluation metrics.
+Table \ref{tab:comparison_extended} shows the same pattern on LIAR and ISOT separately, so the transformer models perform consistently within each dataset. This is a within-dataset result. The cross-dataset test later in this section shows that it does not carry over from one dataset to another.
 
-The confusion matrix highlights the performance of the classification model by comparing the predicted class values with the actual values. Four elements make up the matrix: TP, TN, FP, and FN. This visualization can give insight into the performance of the model beyond just its accuracy. In detecting fake news, the goal is to reduce the number of false positives, which are instances where actual news articles are classified as fake. At the same time, we want to avoid false negatives, which occur when fake news is not detected correctly. Confusion Matrix for BERT, BiLSTM and BERT+BiLSTM Model for all the dataset is shown in Fig. 2.
+The hybrid did not beat BERT alone in the current setting, but this does not show that hybrid models lack merit. The BiLSTM module sits on top of BERT's contextual embeddings to detect sequences in the data. It may be more useful with larger datasets, more epochs, and tuned hyperparameters, so the combination may perform better once it is optimized.
+
+The plots below were generated from artificial predictions constructed to match the reported evaluation metrics. They illustrate the reported behaviour and are not raw outputs of the trained models.
+
+The confusion matrix compares predicted class values with actual values and has four elements: TP, TN, FP, and FN. It shows how the model behaves beyond accuracy alone. In fake news detection, the goal is to reduce false positives, where real news is classified as fake, and also to avoid false negatives, where fake news goes undetected. Fig. 2 shows the confusion matrices of BERT, BiLSTM, and BERT+BiLSTM for all datasets.
 
 \begin{figure}[htbp]
 \centering
@@ -374,7 +376,7 @@ The confusion matrix highlights the performance of the classification model by c
 \label{fig:confusion}
 \end{figure}
 
-The ROC curve helps assess the performance of the model in classifying the difference between true and false news by considering various classification threshold values. The plot of True Positive Rate (sensitivity) versus the False Positive Rate is the plot of ROC curve. The more the curve lies near to the top left of the plot, the better the performance of the model. The area under the curve (AUC) gives us a measure of the model’s discrimination ability in a single scalar quantity. Values of AUC near 1.0 denote a very good classification model, whereas 0.5 indicates a random classifier. Higher values of AUC for BERT based models show that BERT models perform better in discriminating between true and false news. ROC Curves for BERT, BiLSTM and BERT+BiLSTM Model for all the datasets is shown in Fig. 3.
+The ROC curve plots the True Positive Rate (sensitivity) against the False Positive Rate over various classification thresholds and shows how well the model separates true from false news. The closer the curve lies to the top left, the better the model. The area under the curve (AUC) summarizes discrimination in one number: values near 1.0 mean a very good classifier and 0.5 means a random one. The higher AUC of the BERT-based models shows that they discriminate better between true and false news. Fig. 3 shows the ROC curves of BERT, BiLSTM, and BERT+BiLSTM for all datasets.
 
 \begin{figure}[htbp]
 \centering
@@ -383,7 +385,7 @@ The ROC curve helps assess the performance of the model in classifying the diffe
 \label{fig:roc}
 \end{figure}
 
-The Precision–Recall (PR) curve demonstrates the tradeoff between precision and recall based on different thresholds used. This plot is particularly relevant when dealing with skewed data as it provides an idea on the performance of the algorithm. Precision describes how many of the positive cases that are predicted as fake news are truly positive, while recall describes how many actual positive cases have been detected by the algorithm. An ideal model would have high precision and high recall, and therefore the PR curve would help identify such an algorithm. In the case of fake news detection, high recall will ensure minimal false negatives, while high precision will help to minimize the possibility of false positives. PR Curves for BERT, BiLSTM and BERT+BiLSTM Model for all the datasets is shown in Fig. 4.
+The Precision--Recall (PR) curve shows the trade-off between precision and recall over different thresholds and is particularly relevant for skewed data. Precision is the share of predicted fake news that is truly fake, and recall is the share of actual fake news that the algorithm detects. An ideal model has both high, which the PR curve helps to identify. In fake news detection, high recall keeps false negatives low, and high precision keeps false positives low. Fig. 4 shows the PR curves of BERT, BiLSTM, and BERT+BiLSTM for all datasets.
 
 \begin{figure}[htbp]
 \centering
@@ -392,7 +394,7 @@ The Precision–Recall (PR) curve demonstrates the tradeoff between precision an
 \label{fig:pr_curve}
 \end{figure}
 
-The learning curve of the loss shows how well the model learned in each epoch. The model BERT converges fast with less difference between the loss for training and validation, which means that it can generalize well. BiLSTM model converges slowly with more loss compared to BERT model, which means that it underfits. BERT+BiLSTM learns smoothly but does not perform much better than BERT using the current setup. Loss Curves for BERT, BiLSTM and BERT+BiLSTM Model for all the datasets is illustrated in Fig. 5.
+The loss learning curve shows how well the model learned in each epoch. BERT converges fast with a small gap between training and validation loss, which means it generalizes well. The BiLSTM converges slowly and has a higher loss than BERT, which means it underfits. BERT+BiLSTM learns smoothly but does not perform much better than BERT in the current setup. Fig. 5 shows the loss curves of BERT, BiLSTM, and BERT+BiLSTM for all datasets.
 
 \begin{figure}[htbp]
 \centering
@@ -403,9 +405,9 @@ The learning curve of the loss shows how well the model learned in each epoch. T
 
 \subsection{Preliminary Zero-Shot Evaluation with a Local LLM}
 
-To begin probing the LLM-based direction identified as future work in Section 5, a preliminary zero-shot experiment was conducted using a locally hosted large language model, rather than the fine-tuned BiLSTM/BERT/BERT+BiLSTM classifiers described above. The open-weight instruction-tuned model Qwen2.5-1.5B-Instruct \cite{Yang2024Qwen25} was run entirely on local CPU hardware via the Hugging Face \texttt{transformers} library \cite{Wolf2020Transformers}, with no fine-tuning, no retrieval augmentation, and no task-specific training of any kind. For each article, the model was given the headline and a truncated excerpt of the article body inside a system prompt instructing it to answer with exactly one word, REAL or FAKE, and its output was parsed and compared against the ground-truth label.
+As a first step toward the LLM direction named as future work in Section 5, a zero-shot experiment was run with a locally hosted large language model instead of the fine-tuned classifiers above. The open-weight instruction-tuned model Qwen2.5-1.5B-Instruct \cite{Yang2024Qwen25} ran entirely on a local CPU through the Hugging Face \texttt{transformers} library \cite{Wolf2020Transformers}, with no fine-tuning, no retrieval augmentation, and no task-specific training. For each article, the model received the headline and a truncated excerpt of the body in a system prompt that told it to answer with exactly one word, REAL or FAKE. The output was parsed and compared with the ground-truth label.
 
-The evaluation was performed on a stratified random sample of 300 articles (150 real, 150 fake) drawn from the same ISOT-derived real/fake news corpus \cite{ISOTDataset} used elsewhere in this study, so that the results are directly comparable in kind, if not in scale, with Table \ref{tab:comparison}. Table \ref{tab:llm-comparison} reports the resulting metrics.
+The test used a stratified random sample of 300 articles (150 real, 150 fake) from the same ISOT-derived corpus \cite{ISOTDataset} used elsewhere in this study. The results are comparable in kind, though not in scale, with Table \ref{tab:comparison}. Table \ref{tab:llm-comparison} gives the metrics.
 
 \begin{table}[H]
 \centering
@@ -422,15 +424,15 @@ Local LLM, Qwen2.5-1.5B-Instruct (zero-shot) & 0.7233 & 0.9136 & 0.4933 & 0.6407
 \end{tabular}
 \end{table}
 
-The zero-shot local LLM reaches 72.33\% accuracy without any task-specific training, which is well above a random baseline but clearly below the fine-tuned transformer models. Its precision (0.9136) is high, meaning that articles it flags as FAKE are usually genuinely fake, but its recall (0.4933) is comparatively low: the model fails to identify roughly half of the actual fake articles in the sample, instead defaulting to a REAL verdict when the writing style alone does not present an obvious red flag. This asymmetry is consistent with the model reasoning purely from surface linguistic style rather than from verified evidence, since well-written fabricated articles can be stylistically indistinguishable from genuine reporting without external fact-checking signals.
+Without any task-specific training, the zero-shot LLM reaches 72.33\% accuracy. That is well above chance and clearly below the fine-tuned transformers. Its precision (0.9136) is high, so articles it flags as FAKE are usually fake. Its recall (0.4933) is low: it misses about half of the fake articles and answers REAL whenever the writing style shows no obvious red flag. This pattern fits a model that judges surface style and not verified evidence, since a well-written fabrication can look the same as genuine reporting without external fact-checking signals.
 
-These preliminary results are consistent with, and directly motivate, the RAG-based direction already outlined in the Future Scope discussion below: grounding the LLM's classification in retrieved evidence from sources such as Snopes, PolitiFact, or Wikipedia, rather than relying on stylistic judgement alone, would be expected to particularly improve recall on subtler fake articles.
+These preliminary results support the RAG-based direction outlined in the Future Scope discussion. Grounding the LLM's decision in evidence retrieved from sources such as Snopes, PolitiFact, or Wikipedia, and not in stylistic judgement alone, would be expected to improve recall on subtler fake articles.
 
 \subsection{GRU-Based Hybrid Architectures}
 
-To examine whether lighter recurrent architectures can approach the transformer results, a standalone Gated Recurrent Unit (GRU) model and four GRU-based hybrids were trained on the ISOT-derived Kaggle corpus (23,481 fake and 21,417 real articles). Only the article headline was used as input. Headlines were lower-cased, stripped of non-alphanumeric characters and stopwords, tokenized with a 10,000-word vocabulary (12,000 for GRU+BiLSTM), and padded or truncated to 40 tokens. The data were split in a stratified 70:15:15 ratio, giving 31,428 training, 6,735 validation, and 6,735 test samples. All models were trained with the Adam optimizer (learning rate $10^{-3}$), binary cross-entropy loss, batch size 64, dropout 0.3, and at most 12 epochs, with early stopping on validation loss (patience 3, best weights restored).
+To see whether lighter recurrent architectures can approach the transformer results, a standalone Gated Recurrent Unit (GRU) model and four GRU-based hybrids were trained on the ISOT-derived Kaggle corpus (23,481 fake and 21,417 real articles). The input was the headline only. Headlines were lower-cased, stripped of non-alphanumeric characters and stopwords, tokenized with a 10,000-word vocabulary (12,000 for GRU+BiLSTM), and padded or truncated to 40 tokens. A stratified 70:15:15 split gave 31,428 training, 6,735 validation, and 6,735 test samples. All models used the Adam optimizer (learning rate $10^{-3}$), binary cross-entropy loss, batch size 64, dropout 0.3, and at most 12 epochs, with early stopping on validation loss (patience 3, best weights restored).
 
-The five architectures are: (i) a single GRU layer followed by global max-pooling over all time steps; (ii) GRU followed by an LSTM layer; (iii) a 1D convolution and pooling stage feeding a GRU; (iv) GRU followed by a Bidirectional LSTM; and (v) two 1D residual convolutional blocks feeding a GRU. Table \ref{tab:gru-comparison} reports the test-set results.
+The five architectures are: (i) a single GRU layer followed by global max-pooling over all time steps; (ii) a GRU followed by an LSTM layer; (iii) a 1D convolution and pooling stage feeding a GRU; (iv) a GRU followed by a Bidirectional LSTM; and (v) two 1D residual convolutional blocks feeding a GRU. Table \ref{tab:gru-comparison} gives the test-set results.
 
 \begin{table}[H]
 \centering
@@ -455,10 +457,10 @@ GRU + ResNet & 0.1179 & 0.9513 & 0.9672 & 0.9387 & 0.9528 \\ \hline
 \label{fig:gru_metrics}
 \end{figure}
 
-All five models fall within 0.4 percentage points of each other in accuracy and 0.33 points in F1, so the added convolutional, residual, or second recurrent stage gives no meaningful gain over the standalone GRU. GRU+BiLSTM has the highest F1 (0.9560) and GRU+ResNet the lowest test loss (0.1179), but these differences are small. The hybrids trade precision against recall: GRU+BiLSTM has the highest precision (0.9694), while GRU+LSTM has the highest recall (0.9640). The standalone GRU collapsed to predicting the majority class when only its final hidden state was used; pooling over every time step resolved this. GRU+ResNet trained less stably, with validation accuracy dropping to 0.7526 at one epoch before recovering. These models, trained on short headlines with a small vocabulary, reach accuracy close to that of the fine-tuned BERT models in Table \ref{tab:comparison} with far smaller models.
+The five models lie within 0.4 percentage points of each other in accuracy and 0.33 points in F1, so the extra convolutional, residual, or second recurrent stage gives no meaningful gain over the standalone GRU. GRU+BiLSTM has the highest F1 (0.9560) and GRU+ResNet the lowest test loss (0.1179), but the differences are small. The hybrids trade precision against recall: GRU+BiLSTM has the highest precision (0.9694) and GRU+LSTM the highest recall (0.9640). The standalone GRU collapsed to the majority class when only its final hidden state was used, and pooling over every time step fixed this. GRU+ResNet trained less stably, and its validation accuracy dropped to 0.7526 at one epoch before it recovered. Trained on short headlines with a small vocabulary, these models reach accuracy close to that of the fine-tuned BERT models in Table \ref{tab:comparison} while being far smaller.
 
 \subsection{Cross-Dataset Generalization}
-The in-domain scores above are measured on ISOT, whose headlines carry source artifacts such as the ``(Reuters)'' tag. To test whether the models learn the news content rather than these markers, we cleaned the source tags and URLs, removed duplicate titles, split each dataset 70/15/15 with stratification, and trained on one dataset while testing on the other. The second dataset is LIAR2, with labels 0--2 treated as fake and 3--5 as real. Every setting was repeated over three random seeds (five for the GRU), and Table \ref{tab:cross-dataset} reports the mean and standard deviation.
+The in-domain scores above come from ISOT, whose headlines carry source artifacts such as the ``(Reuters)'' tag. To test whether the models learn the news content and not these markers, we removed source tags and URLs, dropped duplicate titles, split each dataset 70/15/15 with stratification, and trained on one dataset while testing on the other. The second dataset is LIAR2, with labels 0--2 treated as fake and 3--5 as real. Every setting was repeated over three random seeds (five for the GRU). Table \ref{tab:cross-dataset} gives the mean and standard deviation.
 
 \begin{table}[htbp]
 \centering
@@ -482,26 +484,27 @@ BERT & ISOT + LIAR2 & LIAR2 (in-domain) & 0.693 $\pm$ 0.004 & 0.717 $\pm$ 0.009 
 \end{tabular}
 \end{table}
 
-Three findings follow. First, both models separate ISOT almost perfectly in-domain (BERT AUC 0.999) but fall to chance on LIAR2 (accuracy 0.50, AUC 0.47), and a model trained on LIAR2 falls below chance on ISOT. The high in-domain accuracy therefore reflects dataset-specific patterns more than transferable fake-news cues. Second, BERT gives only a small gain over the GRU on LIAR2 (F1 0.733 against 0.725), so a larger encoder does not by itself fix this. Third, training on both datasets keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, so mixing sources costs nothing in-domain, but we have not yet tested it on a third, unseen dataset. Closing the cross-domain gap is the main remaining work: stronger encoders, article-body input, retrieval-augmented classification, and explainability checks.
+Three findings follow. First, both models separate ISOT almost perfectly in-domain (BERT AUC 0.999) but fall to chance on LIAR2 (accuracy 0.50, AUC 0.47), and a model trained on LIAR2 falls below chance on ISOT. The high in-domain accuracy therefore reflects dataset-specific patterns more than transferable cues of fake news. Second, BERT gains only a little over the GRU on LIAR2 (F1 0.733 against 0.725), so a larger encoder does not fix the problem on its own. Third, training on both datasets keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, so mixing sources costs nothing in-domain, but this has not yet been tested on a third, unseen dataset. The LIAR scores in Table \ref{tab:comparison_extended} come from a different setup from the LIAR2 runs (label mapping, input cleaning, and number of epochs), so they should not be compared directly with the LIAR2 results. Closing the cross-domain gap is the main remaining work: stronger encoders, article-body input, retrieval-augmented classification, and explainability checks.
 
 \section{Conclusion and Future Research Directions}
 
-The current study explores a state-of-the-art method for fake news identification through a transformer-based learning model. It also includes the comparative analysis of several classical and neural network algorithms. The research framework considers the efficiency of the BiLSTM model, BERT architecture, and hybrid architecture of BERT and BiLSTM in detecting fake news.
+This study examined a transformer-based approach to fake news identification and compared several classical and neural network models. It evaluated the BiLSTM, BERT, and a hybrid of BERT and BiLSTM for detecting fake news.
 
-According to experimental results on different datasets, it is clear that the BiLSTM model alone demonstrates low efficiency, with an accuracy rate of 50\% and F1-score of 0.3333. These results can be explained by such aspects as the insufficient number of epochs, inadequate hyperparameters tuning, and complicated nature of used datasets. At the same time, the BERT algorithm significantly outperforms all other models, with accuracy of 95\% and F1-score of 0.9499.
-This new model is meant to blend the two concepts to enable both contextual and sequential learning. However, it is observed that despite these features, there is no notable performance increase between the model and the baseline BERT model; this suggests that the addition of the sequential model component does not add value in the experimental setup currently employed. As such, BERT alone can be relied upon to classify fake news in this setting without need for the additional component.
+Across the experiments, the standalone BiLSTM showed low efficiency, with 50\% accuracy and an F1-score of 0.3333. The likely causes are too few training epochs, inadequate hyperparameter tuning, and the complexity of the datasets. BERT clearly outperformed all other models, with 95\% accuracy and an F1-score of 0.9499. The hybrid was meant to combine contextual and sequential learning. It gave no notable gain over BERT, which suggests that the sequential component adds no value in the current experimental setup. BERT alone can therefore be relied on to classify fake news here, without the extra component.
 
-In general, transformer-based models have been shown to produce stable results in terms of fake news detection. Therefore, the implementation of the model is best suited for using BERT alone, since it gives high-level performance without added complexity.
+Within each dataset, transformer-based models gave stable results. BERT alone is the best choice for implementation, since it performs at a high level without added complexity.
 
-A further comparison of a standalone GRU with four GRU-based hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet) on headline-only input produced accuracies of 95.1--95.5\% and F1 scores of 0.9528--0.9560 (Table \ref{tab:gru-comparison}). The hybrids therefore offer no meaningful advantage over the standalone GRU, and all of them match the fine-tuned BERT models with far smaller models.
+A further comparison of a standalone GRU with four GRU-based hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet) on headline-only input gave accuracies of 95.1--95.5\% and F1 scores of 0.9528--0.9560 (Table \ref{tab:gru-comparison}). The hybrids offer no meaningful advantage over the standalone GRU, and all of them come close to the fine-tuned BERT models while being far smaller.
 
-Although LLMs and XAI techniques are not part of the main system design, a preliminary zero-shot experiment with a local LLM was conducted (Section 3.1, Table \ref{tab:llm-comparison}), which achieved 72.33\% accuracy without any task-specific training but with markedly lower recall than the fine-tuned transformer models, motivating the RAG- and evidence-grounding directions discussed below rather than replacing the current fine-tuned pipeline. Future developments on this system will involve using LLM-based reasoning to aid decision-making, incorporating explainability, expanding to support multi-language and multimodal data, as well as deploying it in a federated environment.
+LLMs and XAI techniques are not part of the main system design. A preliminary zero-shot experiment with a local LLM (Section 4, Table \ref{tab:llm-comparison}) reached 72.33\% accuracy without any task-specific training, but its recall was far lower than that of the fine-tuned transformers. This motivates the RAG and evidence-grounding directions discussed below and does not replace the fine-tuned pipeline.
 
-A cross-dataset test with cleaned and deduplicated headlines shows the limit of these in-domain scores. BERT reaches 0.984 accuracy on ISOT but only 0.504 on LIAR2 when trained on ISOT, and the GRU behaves the same way (0.532), so the models learn dataset-specific patterns more than transferable cues. Training on ISOT and LIAR2 together keeps ISOT accuracy at 0.984 and LIAR2 AUC at 0.772, but this has not yet been tested on a third dataset. Closing this gap with stronger encoders, article-body input, retrieval-augmented classification and explainability analysis is the main work that remains.
+A cross-dataset test with cleaned and deduplicated headlines shows the limit of the in-domain scores. Trained on ISOT, BERT reaches 0.984 accuracy on ISOT but only 0.504 on LIAR2, and the GRU behaves the same way (0.532). The models therefore learn dataset-specific patterns more than transferable cues of fake news. Training on ISOT and LIAR2 together keeps ISOT accuracy at 0.984 and gives a LIAR2 AUC of 0.772, but this has not yet been tested on a third dataset. The main work that remains is to close this gap with stronger encoders, article-body input, retrieval-augmented classification, and explainability analysis.
 
 \subsection{Future Scope}
 
-Future work would also investigate the incorporation of more advanced large language models like GPT-4, LLaMA 2, Mistral, and Gemini in the pipeline for detecting deception. The idea of using Retrieval-Augmented Generation (RAG) would allow the model to use verified databases such as Snopes, PolitiFact, and Wikipedia to find evidence in real-time before classifying information into categories. This would help increase the performance and reliability of the model in cases where misinformation takes different complicated forms such as satires, propaganda, and contextual misinformation. The main limitation with deep learning-based models is that they operate as black boxes, making it difficult for users to understand why a certain decision was made by the model. In future work, incorporating eXplainable AI (XAI) approaches could be considered for transparency purposes. In such a framework, the input document can first be classified using an LLM, possibly with help from evidentiary mechanisms, followed by a layer for generating explanations that are easy to understand for humans about how the model made its predictions. Such a strategy is expected to offer both good accuracy as well as interpretability for human users, such as journalists and fact-checkers. In future, we will focus on the issues related to deployment in terms of Multilingual Detection, Multi-modal Fake News Analysis, Federated Learning, and creating an API.
+Future work should investigate more advanced large language models such as GPT-4, LLaMA 2, Mistral, and Gemini in the detection pipeline. Retrieval-Augmented Generation (RAG) would let the model use verified databases such as Snopes, PolitiFact, and Wikipedia to find evidence in real time before classifying information. This would improve performance and reliability when misinformation takes complicated forms such as satire, propaganda, and contextual misinformation.
+
+The main limitation of deep learning models is that they work as black boxes, which makes it hard for users to understand why a decision was made. Future work should add eXplainable AI (XAI) approaches for transparency. In such a framework, an LLM, possibly helped by evidence retrieval, first classifies the input document, and a further layer then generates a human-readable explanation of the prediction. This is expected to give both good accuracy and interpretability for users such as journalists and fact-checkers. We will also address deployment issues: multilingual detection, multi-modal fake news analysis, federated learning, and an API.
 \bibliographystyle{splncs04}
 \bibliography{references}
 
