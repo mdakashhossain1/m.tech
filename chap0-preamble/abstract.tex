@@ -1,0 +1,14 @@
+
+\sloppy
+\chapter*{\centering Abstract}
+\onehalfspacing
+
+The rapid spread of fake news on digital media makes manual fact-checking impractical, creating a need for automated detection systems. This thesis proposes a fake news detection framework that combines NLP-based text preprocessing with a comparative evaluation of three classification models: a standalone BiLSTM network, a fine-tuned BERT model, and a hybrid BERT + BiLSTM model.
+
+The models were evaluated on the LIAR and ISOT benchmark datasets. BiLSTM performed poorly, reaching only 50\% accuracy, while BERT achieved 95\% accuracy with strong precision and recall. The hybrid BERT + BiLSTM model matched BERT's performance but did not exceed it, showing that the added sequential layer offered no further benefit in this setup.
+
+These results confirm that transformer-based models clearly outperform sequential deep learning models for fake news detection and are well suited to practical use in social media monitoring and fact-checking. Future work will explore Large Language Models, Retrieval-Augmented Generation, and Explainable AI to further improve accuracy and interpretability.
+
+\vspace{0.5in}
+\noindent
+{\bf Keywords:} Fake News Detection, Natural Language Processing, Machine Learning, Deep Learning, BERT, BiLSTM, Transformers, Explainable AI, Misinformation.
