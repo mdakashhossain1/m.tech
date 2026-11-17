@@ -21,7 +21,7 @@ TARGETS = {
     "PR_Curve.png": [Path("thesis/chap5-experimentalresults")],
     "Loss.jpg": [Path("paper/figures"), Path("thesis/chap5-experimentalresults")],
 }
-DATASETS = [("isot", "ISOT"), ("liar", "LIAR2")]
+DATASETS = [("isot", "ISOT"), ("liar", "LIAR")]
 MODELS = [("bilstm", "BiLSTM", "#d95f02"), ("bert", "BERT", "#1b9e77"), ("bert_bilstm", "BERT+BiLSTM", "#7570b3")]
 
 
@@ -81,29 +81,21 @@ def curves(kind, name):
 
 
 def loss():
-    fig, axes = plt.subplots(2, 3, figsize=(12, 7.5))
+    fig, axes = plt.subplots(2, 3, figsize=(11, 6))
     for r, (ds, ds_label) in enumerate(DATASETS):
         for c, (m, m_label, _) in enumerate(MODELS):
             d = load(ds, m)
             epochs = np.arange(1, len(d["train_loss"]) + 1)
-            best = int(np.argmin(d["val_loss"]))
             ax = axes[r][c]
-            ax.plot(epochs, d["train_loss"], marker="o", color="#1f77b4", label="Training loss")
-            ax.plot(epochs, d["val_loss"], marker="s", color="#ff7f0e", label="Validation loss")
-            ax.scatter(epochs[best], d["val_loss"][best], marker="*", s=220, color="#d62728", zorder=5, label="Best validation epoch")
-            for e, t, v in zip(epochs, d["train_loss"], d["val_loss"]):
-                t_above = t >= v
-                ax.annotate(f"{t:.3f}", (e, t), textcoords="offset points", xytext=(0, 9 if t_above else -14), ha="center", fontsize=7, color="#1f77b4")
-                ax.annotate(f"{v:.3f}", (e, v), textcoords="offset points", xytext=(0, -14 if t_above else 9), ha="center", fontsize=7, color="#ff7f0e")
-            ax.margins(y=0.2)
+            ax.plot(epochs, d["train_loss"], marker="o", label="Training")
+            ax.plot(epochs, d["val_loss"], marker="s", label="Validation")
             ax.set_xticks(epochs)
-            ax.set_title(f"{ds_label}: {m_label}", fontsize=11)
+            ax.set_title(f"{ds_label}: {m_label}", fontsize=10)
             ax.set_xlabel("Epoch")
-            ax.set_ylabel("Cross-entropy loss")
+            ax.set_ylabel("Loss")
             ax.grid(alpha=0.3)
-    handles, labels = axes[0][0].get_legend_handles_labels()
-    fig.legend(handles, labels, loc="lower center", ncol=3, fontsize=10, frameon=False)
-    fig.tight_layout(rect=(0, 0.05, 1, 1))
+            ax.legend(fontsize=8)
+    fig.tight_layout()
     save(fig, "Loss.jpg")
 
 
