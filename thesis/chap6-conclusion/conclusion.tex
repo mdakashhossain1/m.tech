@@ -13,19 +13,15 @@ A cross-dataset test with cleaned and deduplicated headlines shows the limit of 
 
 \section{Future Research Direction}
 
-Large Language Models (LLMs) and Explainable AI (XAI) were not part of the system design evaluated in this thesis, but both are clear and promising directions for future work.
+The experiments in this work point to concrete next steps, listed here in order of priority.
 
-Future work should bring more advanced large language models, such as GPT-4, LLaMA~2, Mistral, and Gemini, into the detection pipeline. Retrieval-Augmented Generation (RAG) in particular could let the model query verified databases such as Snopes, PolitiFact, and Wikipedia for supporting evidence in real time before it makes a decision. This would likely improve performance and reliability on complex or context-dependent misinformation such as satire, propaganda, and subtly manipulated content.
+\begin{enumerate}
+\item \textbf{Stronger evidence from more data and more runs.} The model comparison on ISOT and LIAR2 uses one seed, and the mixed-training result has not been tested on a third, unseen dataset. Future work should repeat every comparison over several seeds, report mean and standard deviation, and add a third dataset such as FakeNewsNet.
+\item \textbf{Better cross-domain generalization.} The main weakness found here is the drop to chance level when a model meets a new source. Stronger encoders such as RoBERTa and DeBERTa, training on mixed sources, and methods that remove source artifacts (for example the ``(Reuters)'' tag) should be tested against the cross-dataset protocol used in this work.
+\item \textbf{Article-body input.} All results use the headline only. Using the article body, with a long-text strategy such as chunking, would show whether more context reduces the dependence on dataset-specific patterns.
+\item \textbf{LLMs with retrieval.} The zero-shot local LLM reached 72.33\% accuracy with high precision (0.9136) but low recall (0.4933). Fine-tuning an open model such as LLaMA~2, and grounding its decisions in evidence retrieved from sources such as Snopes, PolitiFact, and Wikipedia (Retrieval-Augmented Generation), should be compared with the fine-tuned classifiers.
+\item \textbf{Explainability.} LIME, SHAP, and attention analysis should be applied to the BERT-based models to check which words drive a decision, and in particular whether the models rely on source artifacts instead of the content of the news.
+\item \textbf{Deployment concerns.} Multilingual detection for low-resource languages, multi-modal analysis of images and video, federated training across organizations, and packaging the pipeline as an API for monitoring tools and newsroom workflows.
+\end{enumerate}
 
-A central limitation of the deep learning models evaluated here, as of deep learning models in general, is that they work largely as black boxes, and an end user cannot easily see why a given decision was made. Future work should add Explainable AI (XAI) methods such as LIME or SHAP for transparency. One promising design is a two-stage pipeline. An LLM, possibly helped by retrieved evidence, first classifies the input, and an explanation layer then produces a human-readable rationale. Such a design is expected to give both strong predictions and interpretability for journalists and fact-checkers, who must act on the model's output.
-
-Beyond LLM integration and explainability, future work should address practical deployment concerns, including:
-
-\begin{itemize}
-\item \textbf{Multilingual Detection:} Extending the models beyond English to detect fake news in several languages, especially low-resource languages that existing benchmark datasets underserve.
-\item \textbf{Multi-modal Fake News Analysis:} Using images, video, and metadata together with text, since misinformation increasingly spans several media types.
-\item \textbf{Federated Learning:} Training models collaboratively across organizations or platforms without centralizing sensitive user or content data.
-\item \textbf{API and System Deployment:} Packaging the pipeline as an API or service that can be integrated into social media monitoring tools, browser extensions, or newsroom fact-checking workflows.
-\end{itemize}
-
-Pursuing these directions would move the work in this thesis from a controlled, benchmark-driven comparison toward a deployable, explainable, and continually evolving fake news detection system.
+Pursuing these directions would move the work in this thesis from a controlled, benchmark-driven comparison toward a deployable, explainable, and more reliable fake news detection system. The results above also set the standard such a system must meet: it should hold its accuracy on a source it has never seen.

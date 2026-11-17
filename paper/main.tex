@@ -302,7 +302,7 @@ Loss Function & Binary Crossentropy & Crossentropy & Crossentropy \\ \hline
 \end{tabular}
 \end{table}
 
-The experiments use three benchmark datasets (Table \ref{tab:datasets}): LIAR \cite{Wang2017Liar}, ISOT \cite{ISOTDataset}, and FakeNewsNet \cite{Shu2020FakeNewsNet}. A Kaggle-hosted version of these datasets was used.
+Three benchmark datasets are described in Table \ref{tab:datasets}: LIAR \cite{Wang2017Liar}, ISOT \cite{ISOTDataset}, and FakeNewsNet \cite{Shu2020FakeNewsNet}. A Kaggle-hosted version of these datasets was used.
 
 \begin{table}[h]
 \centering
@@ -312,10 +312,12 @@ The experiments use three benchmark datasets (Table \ref{tab:datasets}): LIAR \c
 \hline
 \textbf{Dataset} & \textbf{Total Samples} & \textbf{Real News} & \textbf{Fake News} & \textbf{Source} \\ \hline
 LIAR & 12,836 & 6,418 & 6,418 & PolitiFact Statements \\
-ISOT & 44,919 & 21,417 & 23,502 & Reuters \& Fake News Sites \\
+ISOT & 44,898 & 21,417 & 23,481 & Reuters \& Fake News Sites \\
 FakeNewsNet & 23,196 & 11,941 & 11,255 & PolitiFact \& GossipCop \\ \hline
 \end{tabular}
 \end{table}
+
+Not every dataset in Table \ref{tab:datasets} was used in every experiment. The GRU experiments used the raw ISOT corpus (44,898 articles: 23,481 fake and 21,417 real), headline only. The BiLSTM, BERT, hybrid, and cross-dataset runs used cleaned and deduplicated versions of ISOT (38,276 headlines: 20,824 fake and 17,452 real) and of LIAR2, the extended LIAR collection (22,962 statements: 9,723 fake and 13,239 real), with a stratified 70:15:15 split into training, validation, and test sets. FakeNewsNet is described for completeness, and no result in this work was run on it.
 
 The figures and tables in this subsection come from one set of runs on ISOT and LIAR2 (seed 0, a stratified 70:15:15 split, headline-only input, maximum length 64, batch size 32). The BiLSTM used randomly initialized embeddings over BERT WordPiece ids and not pre-trained GloVe vectors, so it differs from the hyperparameter table in embedding source and sequence length. The weights with the lowest validation loss were restored before testing. Earlier drafts of this paper reported a BiLSTM at 50\% accuracy and BERT and BERT + BiLSTM at identical 95\% scores. Those numbers did not reproduce in this rerun and have been replaced.
 
@@ -459,6 +461,14 @@ GRU + ResNet & 0.1179 & 0.9513 & 0.9672 & 0.9387 & 0.9528 \\ \hline
 
 The five models lie within 0.4 percentage points of each other in accuracy and 0.33 points in F1, so the extra convolutional, residual, or second recurrent stage gives no meaningful gain over the standalone GRU. GRU+BiLSTM has the highest F1 (0.9560) and GRU+ResNet the lowest test loss (0.1179), but the differences are small. The hybrids trade precision against recall: GRU+BiLSTM has the highest precision (0.9694) and GRU+LSTM the highest recall (0.9640). The standalone GRU collapsed to the majority class when only its final hidden state was used, and pooling over every time step fixed this. GRU+ResNet trained less stably, and its validation accuracy dropped to 0.7526 at one epoch before it recovered. Trained on short headlines with a small vocabulary, these models reach accuracy close to that of the fine-tuned BERT models in Table \ref{tab:comparison} while being far smaller.
 
+\subsection{Why the GRU Was Used: Advantages and Disadvantages}
+
+The Gated Recurrent Unit (GRU) was added as a lighter alternative to the BiLSTM and the BERT-based models. The question was how much of the transformer result a small recurrent network can reach when it sees only a headline. The GRU suits this question for four reasons. It has two gates (update and reset) and no separate cell state, so it has fewer parameters than an LSTM and trains faster on limited hardware. Headlines are short (40 tokens here), so the extra memory capacity of an LSTM is not needed. A small model gives a cheap baseline against which the cost of BERT can be judged. It also gives one common base for the four hybrids (GRU+LSTM, GRU+CNN, GRU+BiLSTM, GRU+ResNet).
+
+The advantages seen in the experiments are these. The standalone GRU reached 0.9531 accuracy and an F1-score of 0.9549 on ISOT headlines, about 2.4 points of accuracy below the fine-tuned BERT (0.9768), while being far smaller than BERT, which has about 110 million parameters. It needs no pre-trained weights and runs on a CPU or a modest GPU. It is also simple to extend, which made the four hybrid variants easy to build and compare.
+
+The disadvantages are equally clear. A GRU reads tokens one after another, so it cannot process all positions in parallel the way a transformer does, and it handles long-range dependencies less well. Its embeddings are learned from scratch on the training corpus alone, so it has none of the language knowledge that BERT gets from pre-training. It was also sensitive to design: the standalone GRU collapsed to the majority class when only its final hidden state was used, and pooling over every time step fixed this. The added hybrid stages gave no meaningful gain over the plain GRU. Finally, its cross-dataset result was no better than BERT's: trained on ISOT, it reached only 0.532 accuracy on LIAR2. A small model is therefore a reasonable low-cost baseline, but it does not solve the generalization problem.
+
 \subsection{Cross-Dataset Generalization}
 The in-domain scores above come from ISOT, whose headlines carry source artifacts such as the ``(Reuters)'' tag. To test whether the models learn the news content and not these markers, we removed source tags and URLs, dropped duplicate titles, split each dataset 70/15/15 with stratification, and trained on one dataset while testing on the other. The second dataset is LIAR2, with labels 0--2 treated as fake and 3--5 as real. Every setting was repeated over three random seeds (five for the GRU). Table \ref{tab:cross-dataset} gives the mean and standard deviation.
 
@@ -502,9 +512,17 @@ A cross-dataset test with cleaned and deduplicated headlines shows the limit of 
 
 \subsection{Future Scope}
 
-Future work should investigate more advanced large language models such as GPT-4, LLaMA 2, Mistral, and Gemini in the detection pipeline. Retrieval-Augmented Generation (RAG) would let the model use verified databases such as Snopes, PolitiFact, and Wikipedia to find evidence in real time before classifying information. This would improve performance and reliability when misinformation takes complicated forms such as satire, propaganda, and contextual misinformation.
+The experiments in this work point to concrete next steps, listed here in order of priority.
 
-The main limitation of deep learning models is that they work as black boxes, which makes it hard for users to understand why a decision was made. Future work should add eXplainable AI (XAI) approaches for transparency. In such a framework, an LLM, possibly helped by evidence retrieval, first classifies the input document, and a further layer then generates a human-readable explanation of the prediction. This is expected to give both good accuracy and interpretability for users such as journalists and fact-checkers. We will also address deployment issues: multilingual detection, multi-modal fake news analysis, federated learning, and an API.
+\begin{enumerate}
+\item \textbf{Stronger evidence from more data and more runs.} The model comparison on ISOT and LIAR2 uses one seed, and the mixed-training result has not been tested on a third, unseen dataset. Future work should repeat every comparison over several seeds, report mean and standard deviation, and add a third dataset such as FakeNewsNet.
+\item \textbf{Better cross-domain generalization.} The main weakness found here is the drop to chance level when a model meets a new source. Stronger encoders such as RoBERTa and DeBERTa, training on mixed sources, and methods that remove source artifacts (for example the ``(Reuters)'' tag) should be tested against the cross-dataset protocol used in this work.
+\item \textbf{Article-body input.} All results use the headline only. Using the article body, with a long-text strategy such as chunking, would show whether more context reduces the dependence on dataset-specific patterns.
+\item \textbf{LLMs with retrieval.} The zero-shot local LLM reached 72.33\% accuracy with high precision (0.9136) but low recall (0.4933). Fine-tuning an open model such as LLaMA~2, and grounding its decisions in evidence retrieved from sources such as Snopes, PolitiFact, and Wikipedia (Retrieval-Augmented Generation), should be compared with the fine-tuned classifiers.
+\item \textbf{Explainability.} LIME, SHAP, and attention analysis should be applied to the BERT-based models to check which words drive a decision, and in particular whether the models rely on source artifacts instead of the content of the news.
+\item \textbf{Deployment concerns.} Multilingual detection for low-resource languages, multi-modal analysis of images and video, federated training across organizations, and packaging the pipeline as an API for monitoring tools and newsroom workflows.
+\end{enumerate}
+
 \bibliographystyle{splncs04}
 \bibliography{references}
 
